@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserRole, UrgencyLevel } from "@prisma/client";
+import { UserRole, UrgencyLevel } from "@/types/backend-mock";
 
 export const OnboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),

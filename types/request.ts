@@ -1,4 +1,4 @@
-import { UrgencyLevel, RequestStatus, UserRole } from "@prisma/client";
+import { UrgencyLevel, RequestStatus, UserRole } from "./backend-mock";
 import { IUser } from "./user";
 
 export interface IRequest {

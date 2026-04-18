@@ -1,4 +1,4 @@
-import { UserRole, Badge, UrgencyLevel, RequestStatus } from "@prisma/client";
+import { UserRole, Badge, UrgencyLevel, RequestStatus } from "./backend-mock";
 
 export interface IUser {
   id: string;

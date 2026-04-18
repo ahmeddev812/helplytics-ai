@@ -1,92 +1,36 @@
-"use server";
-
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
-import { UserRole } from "@prisma/client";
+import { MOCK_USERS } from "@/lib/mock-data";
+import { UserRole } from "@/types/backend-mock";
 
 export async function createUser(clerkId: string, email: string, name: string) {
-  try {
-    const user = await prisma.user.create({
-      data: {
-        clerkId,
-        email,
-        name,
-      },
-    });
-    return user;
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw new Error("Failed to create user");
-  }
+  return {
+    id: `new-user-${Date.now()}`,
+    clerkId,
+    email,
+    name,
+    role: UserRole.BOTH,
+    skills: [],
+    interests: [],
+    trustScore: 0,
+    badges: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 }
 
 export async function getUserByClerkId(clerkId: string) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { clerkId },
-      include: {
-        badges: true,
-      },
-    });
-    return user;
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    return null;
-  }
+  return MOCK_USERS.find(user => user.clerkId === clerkId) || MOCK_USERS[0];
 }
 
 export async function updateUserProfile(clerkId: string, data: any) {
-  try {
-    const user = await prisma.user.update({
-      where: { clerkId },
-      data: {
-        ...data,
-      },
-    });
-    revalidatePath("/profile");
-    revalidatePath("/dashboard");
-    return user;
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    throw new Error("Failed to update profile");
-  }
+  const user = MOCK_USERS.find(u => u.clerkId === clerkId) || MOCK_USERS[0];
+  return { ...user, ...data };
 }
 
 export async function getLeaderboard(limit = 10) {
-  try {
-    const users = await prisma.user.findMany({
-      orderBy: {
-        trustScore: "desc",
-      },
-      take: limit,
-      select: {
-        id: true,
-        name: true,
-        trustScore: true,
-        badges: true,
-        clerkId: true,
-      },
-    });
-    return users;
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return [];
-  }
+  return MOCK_USERS.sort((a, b) => b.trustScore - a.trustScore).slice(0, limit);
 }
 
 export async function updateTrustScore(userId: string, increment: number) {
-  try {
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        trustScore: {
-          increment,
-        },
-      },
-    });
-    return user;
-  } catch (error) {
-    console.error("Error updating trust score:", error);
-    throw new Error("Failed to update trust score");
-  }
+  const user = MOCK_USERS.find(u => u.id === userId) || MOCK_USERS[0];
+  return { ...user, trustScore: user.trustScore + increment };
 }

@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { UrgencyLevel, RequestStatus } from "@prisma/client";
+import { UrgencyLevel, RequestStatus } from "@/types/backend-mock";
 import { Bot, Sparkles, Loader2 } from "lucide-react";
 
 export default function CreateRequestPage() {

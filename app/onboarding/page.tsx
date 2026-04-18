@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/types/backend-mock";
 
 export default function OnboardingPage() {
   const { user } = useUser();
