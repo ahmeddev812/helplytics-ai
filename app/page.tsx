@@ -1,7 +1,10 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LandingNavbar } from "@/components/layout/LandingNavbar";
 import { cn } from "@/lib/utils";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
   Bot, 
   Users, 
@@ -13,273 +16,723 @@ import {
   Search,
   MessageSquare,
   Trophy,
-  BrainCircuit
+  BrainCircuit,
+  Star,
+  Menu,
+  X,
+  Rocket,
+  Heart,
+  Quote,
+  PlusCircle,
+  Wand2,
+  Tag,
+  Clock,
+  FileText,
+  Send
 } from "lucide-react";
 
-export default function LandingPage() {
+// Animated Counter Component
+const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          let start = 0;
+          const duration = 2000;
+          const increment = target / (duration / 16);
+          const timer = setInterval(() => {
+            start += increment;
+            if (start >= target) {
+              setCount(target);
+              clearInterval(timer);
+            } else {
+              setCount(Math.floor(start));
+            }
+          }, 16);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target]);
+
   return (
-    <div className="flex flex-col min-h-screen bg-white selection:bg-primary/10">
-    
-      <LandingNavbar />
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
-        {/* Abstract Background Elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none -z-10">
-          <div className="absolute top-[-10%] left-[-20%] w-[70%] h-[70%] bg-primary/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-[10%] right-[-20%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[120px]" />
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+    <div ref={ref} className="text-4xl font-black text-primary mb-1">
+      {count.toLocaleString()}{suffix}
+    </div>
+  );
+};
+
+// Testimonial Card Component
+const TestimonialCard = ({ name, role, content, rating, delay }: any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay }}
+    whileHover={{ scale: 1.02, y: -5 }}
+    className="p-6 rounded-2xl bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300"
+  >
+    <div className="flex items-center gap-1 mb-4">
+      {[...Array(5)].map((_, i) => (
+        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+      ))}
+    </div>
+    <Quote className="h-8 w-8 text-primary/20 mb-3" />
+    <p className="text-slate-600 text-sm leading-relaxed mb-4">{content}</p>
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold">
+        {name[0]}
+      </div>
+      <div>
+        <p className="font-bold text-slate-900 text-sm">{name}</p>
+        <p className="text-xs text-slate-500">{role}</p>
+      </div>
+    </div>
+  </motion.div>
+);
+
+// Create Request Feature Card
+const CreateRequestFeature = ({ icon: Icon, title, description, color }: any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    whileHover={{ y: -5 }}
+    className="p-6 rounded-2xl bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300"
+  >
+    <div className={cn("w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4 shadow-lg", color)}>
+      <Icon className="h-6 w-6 text-white" />
+    </div>
+    <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
+    <p className="text-sm text-slate-500 leading-relaxed">{description}</p>
+  </motion.div>
+);
+
+export default function LandingPage() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { label: "Explore", href: "/explore" },
+    { label: "AI Center", href: "/ai-center" },
+    { label: "Create Request", href: "/request/create" },
+  ];
+
+  return (
+    <div className="flex flex-col min-h-screen bg-white selection:bg-primary/10 overflow-x-hidden">
+      {/* Animated Background Grid */}
+      <div className="fixed inset-0 pointer-events-none -z-10 opacity-20">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
+      </div>
+
+      {/* Navbar */}
+      <nav className={cn(
+        "fixed top-0 w-full z-50 transition-all duration-300",
+        isScrolled ? "bg-white/95 backdrop-blur-xl border-b border-slate-200/50 shadow-sm" : "bg-transparent"
+      )}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600 shadow-lg shadow-primary/25 transition-transform group-hover:scale-110">
+                <Sparkles className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-xl font-black tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                Helplytics AI
+              </span>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-slate-600 hover:text-primary transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="hidden md:flex items-center gap-3">
+              <Link href="/sign-in">
+                <Button variant="ghost" size="sm" className="font-semibold">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button size="sm" className="bg-gradient-to-r from-primary to-purple-600 text-white shadow-md hover:shadow-lg transition-all">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
-        <div className="container mx-auto px-4 relative">
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white border-b border-slate-200"
+            >
+              <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-sm font-medium text-slate-600 hover:text-primary transition-colors py-2"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="flex gap-3 pt-2">
+                  <Link href="/sign-in" className="flex-1">
+                    <Button variant="outline" className="w-full">Sign In</Button>
+                  </Link>
+                  <Link href="/sign-up" className="flex-1">
+                    <Button className="w-full bg-gradient-to-r from-primary to-purple-600">Get Started</Button>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+        <motion.div style={{ opacity }} className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span>Next-Gen Community Support</span>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-purple-500/10 border border-primary/20 mb-8"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-primary">AI-Powered Support</span>
+            </motion.div>
             
-            <h1 className="text-6xl lg:text-8xl font-black tracking-tight mb-8 text-slate-900 leading-[0.9] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-              Get help. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">Give back.</span>
-            </h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight mb-6 text-slate-900 leading-[1.1]"
+            >
+              Get help.{" "}
+              <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                Give back.
+              </span>
+            </motion.h1>
             
-            <p className="max-w-2xl mx-auto text-xl text-slate-500 mb-12 leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="max-w-2xl mx-auto text-lg sm:text-xl text-slate-500 mb-10 leading-relaxed"
+            >
               The world's first AI-native platform for community collaboration. 
               Find expert help in seconds or grow your reputation by helping others.
-            </p>
+            </motion.p>
             
-            <div className="flex flex-col sm:flex-row justify-center gap-4 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-500">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col sm:flex-row justify-center gap-4"
+            >
               <Link href="/sign-up">
-                <Button size="lg" className="h-14 px-10 text-lg font-bold rounded-2xl shadow-2xl shadow-primary/20 hover:shadow-primary/40 transition-all gap-3">
-                  Get Started for Free <ArrowRight className="h-5 w-5" />
+                <Button size="lg" className="h-12 sm:h-14 px-6 sm:px-10 text-base sm:text-lg font-bold rounded-xl shadow-xl shadow-primary/25 hover:shadow-2xl transition-all gap-2 group">
+                  Get Started for Free
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link href="/explore">
-                <Button size="lg" variant="outline" className="h-14 px-10 text-lg font-bold rounded-2xl border-slate-200 hover:bg-slate-50">
+                <Button size="lg" variant="outline" className="h-12 sm:h-14 px-6 sm:px-10 text-base sm:text-lg font-bold rounded-xl border-slate-200 hover:bg-slate-50">
                   Explore Network
                 </Button>
               </Link>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Feature Cards Preview */}
-          <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 animate-in fade-in zoom-in-95 duration-1000 delay-700">
-            {[
-              { 
-                icon: BrainCircuit, 
-                title: "AI Analysis", 
-                desc: "Smart categorization & tag suggestions",
-                color: "bg-blue-500"
-              },
-              { 
-                icon: ShieldCheck, 
-                title: "Verified Trust", 
-                desc: "Reputation system powered by impact",
-                color: "bg-primary"
-              },
-              { 
-                icon: Zap, 
-                title: "Fast Matching", 
-                desc: "Connect with experts in real-time",
-                color: "bg-amber-500"
-              }
-            ].map((item, i) => (
-              <div key={i} className="group p-8 rounded-3xl border border-slate-100 bg-white/50 backdrop-blur-sm hover:border-primary/20 hover:shadow-xl transition-all duration-300">
-                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg", item.color)}>
-                  <item.icon className="h-6 w-6" />
+          {/* Animated UI Mockup */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className="relative mt-20 mx-auto max-w-5xl"
+          >
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200">
+              <div className="bg-gradient-to-r from-slate-100 to-white p-4 border-b">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-slate-900">{item.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
+              <div className="bg-gradient-to-br from-slate-50 to-white p-8">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="h-8 w-2/3 bg-slate-200 rounded-lg animate-pulse" />
+                    <div className="space-y-2">
+                      <div className="h-4 w-full bg-slate-100 rounded-lg animate-pulse" />
+                      <div className="h-4 w-11/12 bg-slate-100 rounded-lg animate-pulse" />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="h-8 w-20 bg-primary/10 rounded-lg animate-pulse" />
+                      <div className="h-8 w-20 bg-slate-100 rounded-lg animate-pulse" />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-8 w-full bg-slate-200 rounded-lg animate-pulse" />
+                    <div className="flex gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 w-1/2 bg-slate-100 rounded-lg animate-pulse" />
+                        <div className="h-3 w-full bg-slate-100 rounded-lg animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Floating Badges */}
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="absolute -top-6 -right-6 bg-white rounded-xl shadow-xl p-3 border border-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                  <CheckCircle2 className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400">Request Solved</p>
+                  <p className="text-xs font-bold text-slate-900">In 2 hours!</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+              className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-3 border border-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-slate-400">AI Match</p>
+                  <p className="text-xs font-bold text-slate-900">95% accuracy</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Social Proof / Stats Bar */}
+      <section className="py-16 border-y border-slate-100 bg-gradient-to-r from-slate-50/50 to-white/50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-2"
+            >
+              <AnimatedCounter target={25000} suffix="+" />
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Requests Solved</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="space-y-2"
+            >
+              <div className="text-4xl font-black text-primary mb-1">4.9/5</div>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Avg Satisfaction</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-2"
+            >
+              <AnimatedCounter target={10000} suffix="+" />
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Active Members</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Features Grid */}
+      <section className="py-24 container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 mb-4"
+          >
+            <Sparkles className="h-3 w-3 text-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">AI Features</span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4"
+          >
+            Intelligent features for <span className="text-primary">smart collaboration</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-slate-500"
+          >
+            Powered by cutting-edge AI to connect you with the right help, faster.
+          </motion.p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: BrainCircuit, title: "AI Smart Categorization", desc: "Auto-tags and categorizes requests for better visibility", color: "from-blue-500 to-cyan-500" },
+            { icon: Search, title: "Semantic Search", desc: "Find exactly what you need with context-aware search", color: "from-purple-500 to-pink-500" },
+            { icon: Zap, title: "Real-time Expert Matching", desc: "AI matches you with the right experts instantly", color: "from-amber-500 to-orange-500" },
+            { icon: Trophy, title: "Gamified Reputation", desc: "Earn badges and build your trust score", color: "from-emerald-500 to-teal-500" },
+          ].map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -8 }}
+              className="group p-6 rounded-2xl bg-white border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <div className={cn("w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4 shadow-lg", feature.color)}>
+                <feature.icon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">{feature.title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Create Request Feature Section - NEW (Replaced Pricing) */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 mb-4"
+            >
+              <PlusCircle className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Create Request</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4"
+            >
+              Post a request in <span className="text-primary">minutes</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-slate-500 max-w-2xl mx-auto"
+            >
+              Our AI-powered form helps you create the perfect request with smart suggestions and optimization.
+            </motion.p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <CreateRequestFeature
+              icon={Wand2}
+              title="AI Suggestions"
+              description="Get AI-powered tag and category suggestions based on your request content"
+              color="from-purple-500 to-pink-500"
+            />
+            <CreateRequestFeature
+              icon={Tag}
+              title="Smart Tagging"
+              description="Auto-generate relevant tags to help others discover your request"
+              color="from-blue-500 to-cyan-500"
+            />
+            <CreateRequestFeature
+              icon={Clock}
+              title="Urgency Levels"
+              description="Set urgency (Low/Medium/High/Urgent) to get faster responses"
+              color="from-amber-500 to-orange-500"
+            />
+            <CreateRequestFeature
+              icon={FileText}
+              title="Rich Description"
+              description="Write detailed descriptions with formatting to explain your needs clearly"
+              color="from-emerald-500 to-teal-500"
+            />
+            <CreateRequestFeature
+              icon={Send}
+              title="Instant Publishing"
+              description="Post your request immediately and start receiving help offers"
+              color="from-red-500 to-rose-500"
+            />
+            <CreateRequestFeature
+              icon={CheckCircle2}
+              title="Request Tracking"
+              description="Track your request status and manage help offers in one place"
+              color="from-indigo-500 to-purple-500"
+            />
+          </div>
+
+          {/* CTA Button for Create Request */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-center mt-12"
+          >
+            <Link href="/request/create">
+              <Button size="lg" className="h-12 px-8 text-base font-bold rounded-xl bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg shadow-primary/25 hover:shadow-xl transition-all gap-2 group">
+                Create Your First Request
+                <PlusCircle className="h-4 w-4 group-hover:rotate-90 transition-transform" />
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-24 container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 mb-4"
+          >
+            <Rocket className="h-3 w-3 text-primary" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Simple Process</span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4"
+          >
+            How <span className="text-primary">Helplytics AI</span> works
+          </motion.h2>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 relative max-w-4xl mx-auto">
+          {/* Connecting Line (Desktop) */}
+          <div className="hidden md:block absolute top-1/3 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 -translate-y-1/2" />
+          
+          {[
+            { step: 1, icon: FileText, title: "Create Request", desc: "Post what you need help with using our AI-powered form", color: "from-blue-500 to-cyan-500" },
+            { step: 2, icon: Users, title: "Get Matched", desc: "Our AI connects you with verified experts instantly", color: "from-purple-500 to-pink-500" },
+            { step: 3, icon: CheckCircle2, title: "Solve & Earn", desc: "Resolve your issue and earn reputation points", color: "from-emerald-500 to-teal-500" },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.2 }}
+              className="relative text-center"
+            >
+              <div className="relative z-10 w-20 h-20 mx-auto rounded-full bg-gradient-to-br flex items-center justify-center shadow-xl mb-6" style={{ backgroundImage: `linear-gradient(to bottom right, ${item.color.split(' ')[1]}, ${item.color.split(' ')[3]})` }}>
+                <item.icon className="h-8 w-8 text-white" />
+                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center text-sm font-bold text-primary border-2 border-primary/20">
+                  {item.step}
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">{item.title}</h3>
+              <p className="text-slate-500 text-sm">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials / Wall of Love */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+        <div className="container mx-auto px-4 overflow-hidden">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 mb-4"
+            >
+              <Heart className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Wall of Love</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4"
+            >
+              Loved by <span className="text-primary">10,000+</span> community members
+            </motion.h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { name: "Sarah Chen", role: "Software Engineer", content: "Helplytics AI completely transformed how our team collaborates. The AI matching is incredibly accurate!", rating: 5, delay: 0 },
+              { name: "Michael Rodriguez", role: "Product Manager", content: "The trust score system is brilliant. I always know who I'm working with.", rating: 5, delay: 0.1 },
+              { name: "Emily Watson", role: "Student", content: "Found help for my thesis in under 2 hours. This platform is a game-changer!", rating: 5, delay: 0.2 },
+            ].map((testimonial, i) => (
+              <TestimonialCard key={i} {...testimonial} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Social Proof / Stats */}
-      <section className="py-20 border-y border-slate-100 bg-slate-50/50 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-            <div className="max-w-md">
-              <h2 className="text-3xl font-bold text-slate-900 mb-4">Trusted by over 10,000+ members worldwide</h2>
-              <p className="text-slate-500">
-                Join a global network of professionals, students, and creators helping each other grow.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-8 w-full md:w-auto">
-              <div>
-                <div className="text-4xl font-black text-primary mb-1">25k+</div>
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Requests Solved</div>
-              </div>
-              <div>
-                <div className="text-4xl font-black text-slate-900 mb-1">4.9/5</div>
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Avg Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Deep Dive Section */}
-      <section className="py-32 container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold uppercase tracking-wider">
-              Smart Platform
-            </div>
-            <h2 className="text-4xl lg:text-5xl font-black text-slate-900 leading-[1.1]">
-              Collaboration <br />
-              <span className="text-primary">Redefined by AI.</span>
-            </h2>
-            <p className="text-lg text-slate-500 leading-relaxed">
-              We've built Helplytics AI from the ground up to make getting help as seamless as 
-              ordering a coffee. Our AI doesn't just categorize; it understands intent.
-            </p>
-            
-            <ul className="space-y-4">
-              {[
-                { icon: Search, title: "Intelligent Search", desc: "Find exactly what you need with semantic search." },
-                { icon: MessageSquare, title: "Contextual Chat", desc: "Built-in messaging with code highlighting." },
-                { icon: Trophy, title: "Gamified Growth", desc: "Earn badges and climb the leaderboard." }
-              ].map((item, i) => (
-                <li key={i} className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center shrink-0 border border-slate-100">
-                    <item.icon className="h-5 w-5 text-slate-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900">{item.title}</h4>
-                    <p className="text-sm text-slate-500">{item.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="relative">
-            <div className="aspect-square rounded-[40px] bg-gradient-to-br from-primary/10 via-blue-500/5 to-transparent border border-slate-100 p-8">
-              <div className="w-full h-full rounded-[32px] bg-white shadow-2xl overflow-hidden border border-slate-100 relative group">
-                {/* Mock UI Preview */}
-                <div className="p-6 border-b bg-slate-50/50 flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400" />
-                    <div className="w-3 h-3 rounded-full bg-amber-400" />
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                  </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">helplytics-ai-dashboard</div>
-                </div>
-                <div className="p-8 space-y-6">
-                  <div className="h-8 w-1/3 bg-slate-100 rounded-lg animate-pulse" />
-                  <div className="space-y-3">
-                    <div className="h-4 w-full bg-slate-50 rounded-lg animate-pulse" />
-                    <div className="h-4 w-[90%] bg-slate-50 rounded-lg animate-pulse" />
-                    <div className="h-4 w-[95%] bg-slate-50 rounded-lg animate-pulse" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="h-24 bg-primary/5 rounded-2xl border border-primary/10 animate-pulse" />
-                    <div className="h-24 bg-blue-500/5 rounded-2xl border border-blue-500/10 animate-pulse" />
-                  </div>
-                </div>
-                
-                {/* Float Elements */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/40 transition-all duration-1000" />
-              </div>
-            </div>
-            
-            {/* Absolute Badges */}
-            <div className="absolute -top-6 -right-6 p-4 bg-white rounded-2xl shadow-xl border border-slate-100 animate-bounce duration-[3s]">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
-                  <CheckCircle2 className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</div>
-                  <div className="text-sm font-black text-slate-900">Request Solved</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
+      {/* Final CTA Section */}
       <section className="py-24 container mx-auto px-4">
-        <div className="bg-slate-900 rounded-[40px] p-12 lg:p-24 text-center relative overflow-hidden">
-          <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 leading-tight">
-              Ready to join the future of community support?
-            </h2>
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Link href="/sign-up">
-                <Button size="lg" className="h-14 px-10 text-lg font-bold rounded-2xl bg-white text-slate-900 hover:bg-slate-100 shadow-2xl">
-                  Get Started Now
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button size="lg" variant="outline" className="h-14 px-10 text-lg font-bold rounded-2xl border-white/20 text-white hover:bg-white/10">
-                  Talk to Sales
-                </Button>
-              </Link>
-            </div>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-primary/90 to-purple-900 p-12 lg:p-20 text-center shadow-2xl"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-white/5 to-transparent rounded-full blur-3xl" />
           
-          {/* Decorative gradients */}
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-50">
-            <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary rounded-full blur-[140px] opacity-20" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600 rounded-full blur-[140px] opacity-20" />
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm mb-6"
+            >
+              <Rocket className="h-3 w-3 text-white" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-white">Join the Community</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight"
+            >
+              Ready to transform your community experience?
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-white/80 text-lg mb-10 max-w-2xl mx-auto"
+            >
+              Join thousands of members who are already helping and growing together.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Link href="/sign-up">
+                <Button size="lg" className="h-14 px-10 text-lg font-bold rounded-xl bg-white text-slate-900 hover:bg-slate-100 shadow-2xl transition-all gap-2 group">
+                  Start Your Journey
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="py-20 border-t border-slate-100">
+      <footer className="py-16 border-t border-slate-100 bg-slate-50/30">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 lg:col-span-2">
-              <Link href="/" className="text-2xl font-black text-primary mb-6 inline-block">
-                Helplytics AI
+              <Link href="/" className="flex items-center gap-2 mb-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600">
+                  <Sparkles className="h-4 w-4 text-white" />
+                </div>
+                <span className="text-xl font-black tracking-tight text-slate-900">Helplytics AI</span>
               </Link>
-              <p className="text-slate-500 max-w-xs mb-8">
+              <p className="text-slate-500 text-sm max-w-xs mb-6">
                 Empowering communities with AI-driven collaboration and trust.
               </p>
-              <div className="flex gap-4">
-                {/* Social icons could go here */}
-              </div>
             </div>
+            
             <div>
-              <h4 className="font-bold text-slate-900 mb-6">Product</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
+              <h4 className="font-bold text-slate-900 mb-4 text-sm">Product</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
                 <li><Link href="/explore" className="hover:text-primary transition-colors">Explore</Link></li>
                 <li><Link href="/ai-center" className="hover:text-primary transition-colors">AI Center</Link></li>
-                <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+                <li><Link href="/request/create" className="hover:text-primary transition-colors">Create Request</Link></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-bold text-slate-900 mb-6">Community</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
+              <h4 className="font-bold text-slate-900 mb-4 text-sm">Community</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
                 <li><Link href="/leaderboard" className="hover:text-primary transition-colors">Leaderboard</Link></li>
                 <li><Link href="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link></li>
                 <li><Link href="/support" className="hover:text-primary transition-colors">Support</Link></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-bold text-slate-900 mb-6">Legal</h4>
-              <ul className="space-y-4 text-sm text-slate-500">
+              <h4 className="font-bold text-slate-900 mb-4 text-sm">Legal</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
                 <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-primary transition-colors">Terms</Link></li>
+                <li><Link href="/cookies" className="hover:text-primary transition-colors">Cookies</Link></li>
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-sm text-slate-400 font-medium">
-              © 2026 Helplytics AI. Built with ❤️ for the Hackathon.
-            </div>
-            <div className="flex gap-8 text-xs font-bold uppercase tracking-widest text-slate-400">
-              <Link href="#" className="hover:text-slate-900 transition-colors">Twitter</Link>
-              <Link href="#" className="hover:text-slate-900 transition-colors">GitHub</Link>
-              <Link href="#" className="hover:text-slate-900 transition-colors">Discord</Link>
+          
+          <div className="pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-slate-400">
+              © 2026 Helplytics AI. Built with ❤️ for the community.
+            </p>
+            <div className="flex gap-6 text-xs font-bold uppercase tracking-widest text-slate-400">
+              <Link href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-slate-900 transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>
       </footer>
+
+      {/* Floating AI Bot */}
+      <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 3, repeat: Infinity }}
+        className="fixed bottom-6 right-6 z-40"
+      >
+        <div className="relative group cursor-pointer">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary to-purple-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
+          <div className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+            <Bot className="h-6 w-6 text-white" />
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
