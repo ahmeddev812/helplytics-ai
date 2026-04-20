@@ -1,12 +1,17 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
+
+  const isPublic = ["/", "/sign-in", "/sign-up"].some((path) =>
+    req.nextUrl.pathname.startsWith(path)
+  );
+
+  if (!userId && !isPublic) {
+    return Response.redirect(new URL("/sign-in", req.url));
+  }
+});
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|musk)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ["/((?!_next|.*\\..*).*)"],
 };
