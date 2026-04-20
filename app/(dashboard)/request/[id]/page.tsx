@@ -4,10 +4,9 @@ import { getUserByClerkId } from "@/server/actions/user.actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RequestForm } from "@/components/requests/RequestForm"; // Reuse for edit
 import { RequestOfferForm } from "@/components/requests/RequestOfferForm";
 import { formatDistanceToNow } from "date-fns";
-import { Bot, User, Clock, CheckCircle2, MessageSquare } from "lucide-react";
+import { Bot, User, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default async function RequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
