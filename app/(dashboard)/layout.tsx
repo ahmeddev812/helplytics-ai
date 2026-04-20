@@ -103,7 +103,8 @@ export default function DashboardLayout({
               <span>v2.0.0</span>
             </div>
             <div className="flex items-center gap-4">
-              <span>✨ {new Date().toLocaleTimeString()}</span>
+              <span>
+                ✨ {new Date().toLocaleTimeString()}</span>
             </div>
           </div>
         </footer>
