@@ -16,9 +16,10 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 
-export default async function ProfilePage({ params }: { params: { username: string } }) {
+export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
   // Assuming clerkId is passed as username for simplicity in this prototype
-  const user = await getUserByClerkId(params.username);
+  const user = await getUserByClerkId(username);
   if (!user) return <div>User not found</div>;
 
   const userRequests = await getRequests({ userId: user.id });

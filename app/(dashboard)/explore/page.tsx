@@ -5,10 +5,11 @@ import { RequestFilters } from "@/components/requests/RequestFilters";
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const category = searchParams.category as string;
-  const urgency = searchParams.urgency as any;
+  const query = await searchParams;
+  const category = query.category as string;
+  const urgency = query.urgency as any;
   
   const filters: any = { status: "OPEN" };
   if (category && category !== "all") filters.category = category;

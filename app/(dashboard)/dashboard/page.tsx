@@ -8,7 +8,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { AIInsightPanel } from "@/components/ai/AIInsightPanel";
 
 export default async function DashboardPage() {
-  const { userId: clerkId } = auth();
+  const { userId: clerkId } = await auth();
   if (!clerkId) redirect("/sign-in");
 
   const user = await getUserByClerkId(clerkId);
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
         />
         <StatsCard 
           title="Offers Received" 
-          value={recentRequests.reduce((acc, req) => acc + req.helpOffers.length, 0)} 
+          value={recentRequests.reduce((acc, req) => acc + (req.helpOffers?.length || 0), 0)} 
           description="People ready to help" 
           icon="users"
         />

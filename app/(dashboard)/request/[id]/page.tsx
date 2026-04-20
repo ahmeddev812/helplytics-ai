@@ -10,9 +10,10 @@ import { formatDistanceToNow } from "date-fns";
 import { Bot, User, Clock, CheckCircle2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
-export default async function RequestDetailPage({ params }: { params: { id: string } }) {
-  const { userId: clerkId } = auth();
-  const request = await getRequestById(params.id);
+export default async function RequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { userId: clerkId } = await auth();
+  const request = await getRequestById(id);
   const user = clerkId ? await getUserByClerkId(clerkId) : null;
 
   if (!request) return <div>Request not found</div>;
@@ -83,13 +84,13 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
         <div className="md:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl">Help Offers ({request.helpOffers.length})</CardTitle>
+              <CardTitle className="text-xl">Help Offers ({request.helpOffers?.length || 0})</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {request.helpOffers.length === 0 ? (
+              {(request.helpOffers?.length || 0) === 0 ? (
                 <p className="text-center py-8 text-muted-foreground">No help offers yet. Be the first!</p>
               ) : (
-                request.helpOffers.map((offer: any) => (
+                request.helpOffers?.map((offer: any) => (
                   <div key={offer.id} className="p-4 border rounded-lg flex flex-col gap-3">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2 font-medium text-sm">

@@ -50,7 +50,7 @@ export function Navbar() {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive"></span>
               </Button>
-              
+              <UserButton afterSignOutUrl="/" />
             </div>
           ) : (
             <div className="flex items-center gap-2">

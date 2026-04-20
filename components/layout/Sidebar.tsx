@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
@@ -14,19 +15,20 @@ import {
   UserCircle 
 } from "lucide-react";
 
-const routes = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Explore", icon: Compass, href: "/explore" },
-  { label: "Create Request", icon: PlusCircle, href: "/request/create" },
-  { label: "Messages", icon: MessageSquare, href: "/messages" },
-  { label: "Leaderboard", icon: Trophy, href: "/leaderboard" },
-  { label: "AI Center", icon: Bot, href: "/ai-center" },
-  { label: "Notifications", icon: Bell, href: "/notifications" },
-  { label: "Profile", icon: UserCircle, href: "/profile" },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+
+  const routes = [
+    { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+    { label: "Explore", icon: Compass, href: "/explore" },
+    { label: "Create Request", icon: PlusCircle, href: "/request/create" },
+    { label: "Messages", icon: MessageSquare, href: "/messages" },
+    { label: "Leaderboard", icon: Trophy, href: "/leaderboard" },
+    { label: "AI Center", icon: Bot, href: "/ai-center" },
+    { label: "Notifications", icon: Bell, href: "/notifications" },
+    { label: "Profile", icon: UserCircle, href: user ? `/profile/${user.id}` : "/onboarding" },
+  ];
 
   return (
     <div className="flex flex-col h-full w-64 border-r bg-card text-card-foreground">
