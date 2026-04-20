@@ -44,9 +44,9 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           <div className="flex items-center gap-4 pt-2 text-sm">
             <div className="flex items-center gap-1.5 font-medium">
               <User className="h-4 w-4" />
-              {request.user.name}
+              {request.user?.name || "Unknown User"}
               <span className="text-xs font-normal text-muted-foreground">
-                ({request.user.trustScore} Trust)
+                ({request.user?.trustScore || 0} Trust)
               </span>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2 font-medium text-sm">
                         <User className="h-4 w-4" />
-                        {offer.user.name}
+                        {offer.user?.name || "Anonymous Helper"}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
                         {formatDistanceToNow(new Date(offer.createdAt))} ago

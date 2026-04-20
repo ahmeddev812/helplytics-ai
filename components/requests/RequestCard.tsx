@@ -39,7 +39,7 @@ export function RequestCard({ request }: { request: any }) {
         <div className="flex items-center gap-4 text-xs text-muted-foreground mt-auto">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
-            {request.user.name}
+            {request.user?.name || "Unknown User"}
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />

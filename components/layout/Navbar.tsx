@@ -67,16 +67,14 @@ export function Navbar() {
                 <div className="h-8 w-px bg-slate-100 mx-1" />
                 
                 <div className="flex items-center gap-3 pl-1">
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: "h-9 w-9 rounded-xl border-2 border-white shadow-sm ring-1 ring-slate-100",
-                        userButtonTrigger: "focus:shadow-none"
-                      }
-                    }}
-                    afterSignOutUrl="/" 
-                  />
-                  <div className="hidden xl:block text-left">
+                  <UserButton
+                   appearance={{
+                     elements: {
+                       userButtonAvatarBox: "h-9 w-9 rounded-xl border-2 border-white shadow-sm ring-1 ring-slate-100",
+                       userButtonTrigger: "focus:shadow-none"
+                     }
+                   }}
+                  />                  <div className="hidden xl:block text-left">
                     <p className="text-[10px] font-black text-slate-900 leading-none truncate max-w-[100px]">{user?.fullName}</p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Community Tier</p>
                   </div>
