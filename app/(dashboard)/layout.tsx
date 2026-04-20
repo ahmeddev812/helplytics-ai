@@ -1,9 +1,10 @@
 "use client";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Menu, X, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+
 
 export default function DashboardLayout({
   children,
