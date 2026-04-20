@@ -20,21 +20,7 @@ export function Navbar() {
             <span className="text-lg font-black tracking-tight text-slate-900">Helplytics <span className="text-primary italic">AI</span></span>
           </Link>
           
-          <div className="hidden md:flex items-center gap-1.5 font-bold">
-            {[
-              { label: "Dashboard", href: "/dashboard" },
-              { label: "Explore", href: "/explore" },
-              { label: "Leaderboard", href: "/leaderboard" },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-lg px-3.5 py-1.5 text-xs text-slate-500 uppercase tracking-widest transition-colors hover:bg-slate-50 hover:text-slate-900"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          {/* REMOVED the 3 navigation links - Dashboard, Explore, Leaderboard */}
         </div>
 
         <div className="flex items-center gap-5">
@@ -74,7 +60,8 @@ export function Navbar() {
                        userButtonTrigger: "focus:shadow-none"
                      }
                    }}
-                  />                  <div className="hidden xl:block text-left">
+                  />                  
+                  <div className="hidden xl:block text-left">
                     <p className="text-[10px] font-black text-slate-900 leading-none truncate max-w-[100px]">{user?.fullName}</p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Community Tier</p>
                   </div>

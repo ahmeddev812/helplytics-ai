@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Navbar } from "@/components/layout/Navbar";
+import { LandingNavbar } from "@/components/layout/LandingNavbar";
 import { cn } from "@/lib/utils";
 import { 
   Bot, 
@@ -19,8 +19,8 @@ import {
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white selection:bg-primary/10">
-      <Navbar />
-      
+    
+      <LandingNavbar />
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         {/* Abstract Background Elements */}
