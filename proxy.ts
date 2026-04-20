@@ -25,10 +25,6 @@ export default clerkMiddleware(async (auth, req) => {
     frame-src 'self' *.clerk.com clerk.com;
   `.replace(/\s{2,}/g, ' ').trim();
 
-  const response = NextResponse.next();
-  response.headers.set('Content-Security-Policy', cspHeader);
-  
-  return response;
 });
 
 export const config = {
