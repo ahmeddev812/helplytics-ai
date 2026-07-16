@@ -183,21 +183,21 @@ export default function OnboardingPage() {
                         <Shield className="h-3.5 w-3.5" />
                         Your Role
                       </label>
-                      <div className="grid grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 xs:gap-3">
                         {roleOptions.map((role) => (
                           <button
                             key={role.value}
                             type="button"
                             onClick={() => form.setValue("role", role.value)}
                             className={cn(
-                              "group relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200",
+                              "group relative flex items-center xs:flex-col gap-2 xs:gap-2 p-3 xs:p-4 rounded-xl border-2 transition-all duration-200",
                               watchedRole === role.value 
                                 ? `border-primary bg-gradient-to-br ${role.bg} shadow-md` 
                                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                             )}
                           >
                             <div className={cn(
-                              "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200",
+                              "w-8 xs:w-10 h-8 xs:h-10 rounded-full flex items-center justify-center transition-all duration-200 shrink-0",
                               watchedRole === role.value 
                                 ? `bg-gradient-to-r ${role.color} shadow-lg scale-110` 
                                 : "bg-slate-100"

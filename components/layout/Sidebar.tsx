@@ -42,7 +42,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   ];
 
   return (
-    <div className="flex flex-col h-full w-[280px] bg-gradient-to-b from-white via-white to-slate-50/30 border-r border-slate-200/40 shadow-xl shadow-slate-200/20">
+    <div className="flex flex-col h-full w-[280px] max-w-[85vw] bg-gradient-to-b from-white via-white to-slate-50/30 border-r border-slate-200/40 shadow-xl shadow-slate-200/20">
       {/* Close button for mobile */}
       <div className="flex justify-end p-2 lg:hidden">
         <button

@@ -136,7 +136,7 @@ export default function ProfilePage() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-emerald-500/10 to-teal-500/10 rounded-full blur-2xl" />
         
-        <div className="h-32 sm:h-40 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 relative">
+        <div className="h-24 xs:h-32 sm:h-40 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 relative">
           {editing && (
             <button className="absolute bottom-3 right-3 p-2 rounded-lg bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors" aria-label="Change cover">
               <Camera className="h-4 w-4 text-white" />
@@ -146,7 +146,7 @@ export default function ProfilePage() {
         
         <div className="relative z-10 px-4 sm:px-8 pb-6 sm:pb-8 -mt-16 flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6">
           <div className="relative group">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-2xl">
+            <div className="w-20 xs:w-24 h-20 xs:h-24 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-2xl">
               <User className="h-12 w-12 sm:h-16 sm:w-16 text-slate-400" />
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center">

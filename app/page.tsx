@@ -266,7 +266,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+      <section className="relative pt-28 xs:pt-32 pb-16 xs:pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
         <motion.div style={{ opacity }} className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
@@ -308,13 +308,13 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row justify-center gap-4"
             >
               <Link href="/sign-up">
-                <Button size="lg" className="h-12 sm:h-14 px-6 sm:px-10 text-base sm:text-lg font-bold rounded-xl shadow-xl shadow-primary/25 hover:shadow-2xl transition-all gap-2 group">
+                <Button size="lg" className="h-12 sm:h-14 w-full xs:w-auto px-6 sm:px-10 text-sm xs:text-base sm:text-lg font-bold rounded-xl shadow-xl shadow-primary/25 hover:shadow-2xl transition-all gap-2 group">
                   Get Started for Free
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link href="/explore">
-                <Button size="lg" variant="outline" className="h-12 sm:h-14 px-6 sm:px-10 text-base sm:text-lg font-bold rounded-xl border-slate-200 hover:bg-slate-50">
+              <Link href="/explore" className="w-full xs:w-auto">
+                <Button size="lg" variant="outline" className="h-12 sm:h-14 w-full px-6 sm:px-10 text-sm xs:text-base sm:text-lg font-bold rounded-xl border-slate-200 hover:bg-slate-50">
                   Explore Network
                 </Button>
               </Link>
@@ -765,12 +765,12 @@ export default function LandingPage() {
       <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 3, repeat: Infinity }}
-        className="fixed bottom-6 right-6 z-40"
+        className="fixed bottom-4 right-4 xs:bottom-6 xs:right-6 z-40"
       >
         <div className="relative group cursor-pointer">
           <div className="absolute inset-0 bg-gradient-to-r from-primary to-purple-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-          <div className="relative w-12 h-12 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-            <Bot className="h-6 w-6 text-white" />
+          <div className="relative w-10 xs:w-12 h-10 xs:h-12 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+            <Bot className="h-5 xs:h-6 w-5 xs:w-6 text-white" />
           </div>
         </div>
       </motion.div>

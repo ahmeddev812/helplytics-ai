@@ -74,7 +74,7 @@ export default function MessagesPage() {
         
         {/* Sidebar: Chat List */}
         <div className={cn(
-          "fixed inset-y-0 left-0 z-40 w-80 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 flex flex-col",
+          "fixed inset-y-0 left-0 z-40 w-80 max-w-[85vw] bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 flex flex-col",
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           {/* Sidebar Header */}

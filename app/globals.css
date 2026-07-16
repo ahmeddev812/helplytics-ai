@@ -2,9 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));   
+@custom-variant dark (&:is(.dark *));
+
+
 
 @theme inline {
+  --breakpoint-xs: 380px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);  /* Changed: this connects Geist */
@@ -123,14 +126,21 @@
   }
   
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
   }
   
-  /* Better font rendering */
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    @apply overflow-x-hidden;
+  }
+
+  /* Minimum touch target size on mobile */
+  @media (pointer: coarse) {
+    button, a, [role="button"], input, select, textarea {
+      min-height: 44px;
+    }
   }
 }
 /* Custom scrollbar */

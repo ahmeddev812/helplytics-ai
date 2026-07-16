@@ -42,12 +42,12 @@ export default function DashboardLayout({
     <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100/50">
       {/* Mobile Sidebar Toggle Button */}
       <button
-        onClick={() => setIsSidebarOpen(true)}
-        className={cn(
-          "lg:hidden fixed bottom-6 right-6 z-50 p-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:scale-105 transition-all duration-300 group",
-          isSidebarOpen && "opacity-0 pointer-events-none"
-        )}
-      >
+          onClick={() => setIsSidebarOpen(true)}
+          className={cn(
+            "lg:hidden fixed bottom-4 right-4 xs:bottom-6 xs:right-6 z-50 p-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:scale-105 transition-all duration-300 group",
+            isSidebarOpen && "opacity-0 pointer-events-none"
+          )}
+        >
         <Menu className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
       </button>
 
@@ -73,7 +73,7 @@ export default function DashboardLayout({
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Top Bar - Optional (shows current time and page title on mobile) */}
         {isMobile && (
-          <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200/50 px-4 py-3 flex items-center justify-between lg:hidden">
+          <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200/50 px-3 xs:px-4 py-2.5 xs:py-3 flex items-center justify-between lg:hidden">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-md">
                 <span className="text-white text-xs font-bold">HA</span>
@@ -88,7 +88,7 @@ export default function DashboardLayout({
         )}
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="w-full px-3 sm:px-5 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="w-full px-2 xs:px-3 sm:px-5 md:px-6 lg:px-8 py-3 xs:py-4 sm:py-6 lg:py-8">
             {/* Page transition animation */}
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
               {children}

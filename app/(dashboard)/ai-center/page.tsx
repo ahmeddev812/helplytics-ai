@@ -338,7 +338,7 @@ export default function AICenterPage() {
         {/* Sidebar */}
         <div
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-72 lg:relative lg:translate-x-0 transform transition-all duration-300 ease-out",
+            "fixed inset-y-0 left-0 z-40 w-72 max-w-[85vw] lg:relative lg:translate-x-0 transform transition-all duration-300 ease-out",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -506,7 +506,7 @@ export default function AICenterPage() {
           </div>
 
           {/* Input Area */}
-          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-slate-200/50 p-4">
+          <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-slate-200/50 p-3 xs:p-4">
             <div className="max-w-3xl mx-auto">
               <PromptInput
                 onSend={handleSend}
