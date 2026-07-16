@@ -49,7 +49,7 @@ export async function POST(req: Request) {
         take: 20,
       });
       messages.push(
-        ...history.map((m) => ({
+        ...history.map((m: { role: string; content: string }) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
         }))
