@@ -33,7 +33,7 @@ export async function GET(req: Request) {
     ]);
 
     return success(
-      conversations.map((c) => ({
+      conversations.map((c: { id: string; title: string; favorite: boolean; _count: { messages: number }; createdAt: Date; updatedAt: Date }) => ({
         id: c.id,
         title: c.title,
         favorite: c.favorite,
