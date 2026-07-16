@@ -61,14 +61,18 @@ export function CommandPalette() {
   useKeyboardShortcut({
     key: "k",
     modifiers: ["ctrl"],
-    handler: () => setOpen((prev) => !prev),
+    handler: () => {
+      setOpen((prev) => !prev);
+      setSelectedIndex(0);
+      if (!open) {
+        setQuery("");
+      }
+    },
   });
 
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 50);
-      setQuery("");
-      setSelectedIndex(0);
     }
   }, [open]);
 
@@ -81,10 +85,6 @@ export function CommandPalette() {
           item.description?.toLowerCase().includes(debouncedQuery.toLowerCase())
       )
     : allItems;
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [debouncedQuery]);
 
   const handleSelect = useCallback(
     (item: SearchResult) => {

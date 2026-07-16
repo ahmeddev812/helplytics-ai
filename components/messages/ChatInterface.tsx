@@ -33,9 +33,9 @@ export function ChatInterface({
   const [newMessage, setNewMessage] = useState("");
 
   const handleSend = () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !currentUserId) return;
     
-    const msg = {
+    const msg: ChatMessage = {
       id: Date.now().toString(),
       content: newMessage,
       senderId: currentUserId,

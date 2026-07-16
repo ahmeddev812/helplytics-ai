@@ -306,15 +306,15 @@ export default function RequestDetailPage() {
           <div className="text-[10px] font-medium text-slate-500">Help Offers</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 text-center">
-          <div className="text-xl font-bold text-emerald-600">{(request as Request & { views?: number }).views ?? 42}</div>
+          <div className="text-xl font-bold text-emerald-600">{(request as unknown as { views?: number }).views ?? 42}</div>
           <div className="text-[10px] font-medium text-slate-500">Total Views</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
-          <div className="text-xl font-bold text-amber-600">{Math.floor((request as Request & { trustImpact?: number }).trustImpact ?? 0)}</div>
+          <div className="text-xl font-bold text-amber-600">{Math.floor((request as unknown as { trustImpact?: number }).trustImpact ?? 0)}</div>
           <div className="text-[10px] font-medium text-slate-500">Trust Impact</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 text-center">
-          <div className="text-xl font-bold text-purple-600">{(request as Request & { shares?: number }).shares ?? 8}</div>
+          <div className="text-xl font-bold text-purple-600">{(request as unknown as { shares?: number }).shares ?? 8}</div>
           <div className="text-[10px] font-medium text-slate-500">Shares</div>
         </div>
       </div>

@@ -89,15 +89,11 @@ const MOCK_MESSAGES = [
 export default function MessagesPage() {
   const { user } = useUser();
   const mounted = useMounted();
-  const [selectedChat, setSelectedChat] = useState<typeof MOCK_CONVERSATIONS[0] | null>(null);
+  const [selectedChat, setSelectedChat] = useState<typeof MOCK_CONVERSATIONS[0] | null>(MOCK_CONVERSATIONS[0]);
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setSelectedChat(MOCK_CONVERSATIONS[0]);
-  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 function readValue<T>(key: string, initialValue: T): T {
   try {
@@ -12,35 +12,27 @@ function readValue<T>(key: string, initialValue: T): T {
 }
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(initialValue);
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    setStoredValue(readValue(key, initialValue));
-    setIsHydrated(true);
-  }, [key, initialValue]);
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    if (typeof window === "undefined") return initialValue;
+    return readValue(key, initialValue);
+  });
 
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
-      try {
-        const valueToStore = value instanceof Function ? value(storedValue) : value;
-        setStoredValue(valueToStore);
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      } catch {
-        console.warn(`Error setting localStorage key "${key}":`);
-      }
+      const prev = readValue(key, initialValue);
+      const valueToStore = value instanceof Function ? value(prev) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
     },
-    [key, storedValue]
+    [key, initialValue]
   );
 
   const removeValue = useCallback(() => {
-    try {
-      window.localStorage.removeItem(key);
-      setStoredValue(initialValue);
-    } catch {
-      console.warn(`Error removing localStorage key "${key}":`);
-    }
+    window.localStorage.removeItem(key);
+    setStoredValue(initialValue);
   }, [key, initialValue]);
+
+  const isHydrated = true;
 
   return [storedValue, setValue, removeValue, isHydrated] as const;
 }

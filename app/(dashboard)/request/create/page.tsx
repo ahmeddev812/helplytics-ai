@@ -55,6 +55,11 @@ export default function CreateRequestPage() {
   });
 
   const watchedValues = useDebounce(form.watch(), 1000);
+  const watchedUrgency = form.watch("urgency");
+  const watchedTags = form.watch("tags");
+  const watchedTitle = form.watch("title");
+  const watchedDescription = form.watch("description");
+  const watchedCategory = form.watch("category");
 
   useEffect(() => {
     const values = form.getValues();
@@ -263,7 +268,7 @@ export default function CreateRequestPage() {
                       onClick={() => form.setValue("urgency", option.value)}
                       className={cn(
                         "flex items-center gap-2 p-2.5 rounded-xl border transition-all duration-200",
-                        form.watch("urgency") === option.value 
+                        watchedUrgency === option.value 
                           ? `${option.bg} border-primary/50 shadow-sm` 
                           : "border-slate-200 bg-slate-50/50 hover:border-slate-300"
                       )}
@@ -272,7 +277,7 @@ export default function CreateRequestPage() {
                       <div className="text-left">
                         <p className={cn(
                           "text-xs font-bold",
-                          form.watch("urgency") === option.value ? option.color : "text-slate-600"
+                          watchedUrgency === option.value ? option.color : "text-slate-600"
                         )}>
                           {option.label}
                         </p>
@@ -292,7 +297,7 @@ export default function CreateRequestPage() {
               </label>
               <Input 
                 placeholder="React, TypeScript, UI/UX, Frontend, API" 
-                value={form.watch("tags").join(", ")}
+                value={watchedTags.join(", ")}
                 onChange={(e) => form.setValue("tags", e.target.value.split(",").map(t => t.trim()).filter(t => t !== ""))}
                 className="h-12 rounded-xl border-slate-200 bg-slate-50/50 focus:border-primary/30 focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all"
               />
@@ -305,20 +310,20 @@ export default function CreateRequestPage() {
             </div>
 
             {/* Preview Section */}
-            {form.watch("title") && (
+            {watchedTitle && (
               <div className="p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white border border-slate-200">
                 <p className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-2">
                   <Sparkles className="h-3 w-3" />
                   Preview
                 </p>
-                <h3 className="font-bold text-slate-900 text-sm mb-1">{form.watch("title")}</h3>
-                <p className="text-xs text-slate-500 line-clamp-2">{form.watch("description")?.slice(0, 100)}...</p>
+                <h3 className="font-bold text-slate-900 text-sm mb-1">{watchedTitle}</h3>
+                <p className="text-xs text-slate-500 line-clamp-2">{watchedDescription?.slice(0, 100)}...</p>
                 <div className="flex gap-2 mt-2">
                   <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                    {form.watch("category")}
+                    {watchedCategory}
                   </span>
-                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                    {form.watch("urgency")}
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-gradient-to-r from-orange-100 to-red-100 text-orange-700">
+                    {watchedUrgency}
                   </span>
                 </div>
               </div>

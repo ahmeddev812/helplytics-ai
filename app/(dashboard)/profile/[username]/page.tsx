@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequestCard } from "@/components/requests/RequestCard";
 import { MOCK_USERS, MOCK_REQUESTS } from "@/lib/mock-data";
-import { useLocalStorage } from "@/lib/hooks";
+import { useMounted, useLocalStorage } from "@/lib/hooks";
 import { TRUST_SCORE } from "@/lib/constants";
 import { toast } from "sonner";
 import { format } from "date-fns";

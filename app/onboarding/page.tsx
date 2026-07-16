@@ -54,6 +54,10 @@ export default function OnboardingPage() {
     },
   });
 
+  const watchedRole = form.watch("role");
+  const watchedBio = form.watch("bio");
+  const watchedName = form.watch("name");
+
   const onSubmit = async (values: z.infer<typeof OnboardingSchema>) => {
     if (!user) return;
     setLoading(true);
@@ -189,25 +193,25 @@ export default function OnboardingPage() {
                             onClick={() => form.setValue("role", role.value)}
                             className={cn(
                               "group relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all duration-200",
-                              form.watch("role") === role.value 
+                              watchedRole === role.value 
                                 ? `border-primary bg-gradient-to-br ${role.bg} shadow-md` 
                                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                             )}
                           >
                             <div className={cn(
                               "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200",
-                              form.watch("role") === role.value 
+                              watchedRole === role.value 
                                 ? `bg-gradient-to-r ${role.color} shadow-lg scale-110` 
                                 : "bg-slate-100"
                             )}>
                               <role.icon className={cn(
                                 "h-5 w-5",
-                                form.watch("role") === role.value ? "text-white" : "text-slate-500"
+                                watchedRole === role.value ? "text-white" : "text-slate-500"
                               )} />
                             </div>
                             <span className={cn(
                               "text-xs font-bold",
-                              form.watch("role") === role.value ? "text-slate-900" : "text-slate-600"
+                              watchedRole === role.value ? "text-slate-900" : "text-slate-600"
                             )}>
                               {role.label}
                             </span>
@@ -345,7 +349,7 @@ export default function OnboardingPage() {
                         placeholder="Tell the community about yourself, your background, expertise, and what you're looking for..." 
                       />
                       <p className="text-[10px] text-slate-400 text-right">
-                        {form.watch("bio")?.length || 0}/500 characters
+                        {watchedBio?.length || 0}/500 characters
                       </p>
                     </div>
 
@@ -368,11 +372,11 @@ export default function OnboardingPage() {
                     <div className="grid grid-cols-2 gap-3 text-[10px]">
                       <div className="p-2 rounded-lg bg-slate-50">
                         <span className="text-slate-400">Name:</span>
-                        <p className="font-medium text-slate-700 truncate">{form.watch("name") || "Not set"}</p>
+                        <p className="font-medium text-slate-700 truncate">{watchedName || "Not set"}</p>
                       </div>
                       <div className="p-2 rounded-lg bg-slate-50">
                         <span className="text-slate-400">Role:</span>
-                        <p className="font-medium text-slate-700">{form.watch("role")}</p>
+                        <p className="font-medium text-slate-700">{watchedRole}</p>
                       </div>
                     </div>
                   </motion.div>
