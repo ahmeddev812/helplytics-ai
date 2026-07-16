@@ -38,9 +38,9 @@ export async function getUserAnalytics(userId: string, days = 30) {
     orderBy: { date: "asc" },
   });
 
-  const totalAiRequests = usage.reduce((sum, u) => sum + u.aiRequests, 0);
-  const totalPrompts = usage.reduce((sum, u) => sum + u.promptsUsed, 0);
-  const totalExports = usage.reduce((sum, u) => sum + u.exports, 0);
+  const totalAiRequests = usage.reduce((sum: number, u) => sum + u.aiRequests, 0);
+  const totalPrompts = usage.reduce((sum: number, u) => sum + u.promptsUsed, 0);
+  const totalExports = usage.reduce((sum: number, u) => sum + u.exports, 0);
 
   return {
     daily: usage,
@@ -78,10 +78,10 @@ export async function getAdminAnalytics(startDate?: Date, endDate?: Date) {
     }),
   ]);
 
-  const totalAiRequests = dailyAnalytics.reduce((s, d) => s + d.aiRequests, 0);
-  const totalPrompts = dailyAnalytics.reduce((s, d) => s + d.totalPrompts, 0);
-  const favorites = dailyAnalytics.reduce((s, d) => s + d.totalFavorites, 0);
-  const avgResponseTime = dailyAnalytics.reduce((s, d) => s + (d.avgResponseTime || 0), 0) / (dailyAnalytics.length || 1);
+  const totalAiRequests = dailyAnalytics.reduce((s: number, d) => s + d.aiRequests, 0);
+  const totalPrompts = dailyAnalytics.reduce((s: number, d) => s + d.totalPrompts, 0);
+  const favorites = dailyAnalytics.reduce((s: number, d) => s + d.totalFavorites, 0);
+  const avgResponseTime = dailyAnalytics.reduce((s: number, d) => s + (d.avgResponseTime || 0), 0) / (dailyAnalytics.length || 1);
 
   return {
     overview: {
@@ -178,9 +178,9 @@ export async function getUsageStats(userId: string) {
       exports: dailyUsage?.exports || 0,
     },
     monthly: {
-      aiRequests: monthlyUsage.reduce((s, u) => s + u.aiRequests, 0),
-      promptsUsed: monthlyUsage.reduce((s, u) => s + u.promptsUsed, 0),
-      exports: monthlyUsage.reduce((s, u) => s + u.exports, 0),
+      aiRequests: monthlyUsage.reduce((s: number, u) => s + u.aiRequests, 0),
+      promptsUsed: monthlyUsage.reduce((s: number, u) => s + u.promptsUsed, 0),
+      exports: monthlyUsage.reduce((s: number, u) => s + u.exports, 0),
     },
     total: {
       aiRequests: totalUsage._sum.aiRequests || 0,
