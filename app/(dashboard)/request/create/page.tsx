@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useDebounce, useLocalStorage } from "@/lib/hooks";
 import { toast } from "sonner";
 import { UrgencyLevel, RequestStatus } from "@/types/backend-mock";
 import { 
@@ -27,7 +28,8 @@ import {
   Shield,
   Tag,
   AlertCircle,
-  Wand2
+  Wand2,
+  Save
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,17 +39,35 @@ export default function CreateRequestPage() {
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiApplied, setAiApplied] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
+  const [draft, setDraft] = useLocalStorage("ha_draft_request", {
+    title: "",
+    description: "",
+    category: "Other",
+    tags: [] as string[],
+    urgency: UrgencyLevel.MEDIUM,
+  });
 
   const form = useForm({
     resolver: zodResolver(RequestSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      category: "Other",
-      tags: [],
-      urgency: UrgencyLevel.MEDIUM,
-    },
+    defaultValues: draft,
   });
+
+  const watchedValues = useDebounce(form.watch(), 1000);
+
+  useEffect(() => {
+    const values = form.getValues();
+    setDraft({
+      title: values.title || "",
+      description: values.description || "",
+      category: values.category || "Other",
+      tags: values.tags || [],
+      urgency: values.urgency || UrgencyLevel.MEDIUM,
+    });
+    setDraftSaved(true);
+    const timer = setTimeout(() => setDraftSaved(false), 2000);
+    return () => clearTimeout(timer);
+  }, [watchedValues]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onSubmit = async (values: any) => {
     if (!user) return;
@@ -122,9 +142,17 @@ export default function CreateRequestPage() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-              <Zap className="h-3.5 w-3.5 text-amber-400" />
-              <span className="text-[10px] font-bold">AI Powered</span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                <span className="text-[10px] font-bold">AI Powered</span>
+              </div>
+              {draftSaved && (
+                <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-500/30 animate-in fade-in duration-300">
+                  <Save className="h-3 w-3 text-emerald-400" />
+                  <span className="text-[10px] font-medium text-emerald-300">Draft saved</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

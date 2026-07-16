@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 interface StatsCardProps {
   title: string;
-  value: string | number;
+  value: string | number | React.ReactNode;
   description: string;
   icon: string;
   trend?: string;
@@ -50,7 +50,7 @@ export function StatsCard({ title, value, description, icon, trend, className }:
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{title}</p>
           <div className="flex items-baseline gap-2">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">{value}</h2>
-            <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-primary transition-colors" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-primary transition-colors shrink-0" />
           </div>
           <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
             {description}

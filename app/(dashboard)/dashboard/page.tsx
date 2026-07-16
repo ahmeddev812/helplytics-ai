@@ -1,26 +1,53 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { getUserByClerkId } from "@/server/actions/user.actions";
-import { getRequests } from "@/server/actions/requests.actions";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { AIInsightPanel } from "@/components/ai/AIInsightPanel";
+import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
+import { ActivityChart } from "@/components/dashboard/ActivityChart";
+import { RecentConversations } from "@/components/dashboard/RecentConversations";
+import { ContinueWorking } from "@/components/dashboard/ContinueWorking";
+import { MOCK_USERS, MOCK_REQUESTS } from "@/lib/mock-data";
 import { Sparkles, TrendingUp, Award, Users, Clock, Star } from "lucide-react";
 
-export default async function DashboardPage() {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) redirect("/sign-in");
+export default function DashboardPage() {
+  const { user, isLoaded } = useUser();
+  const [mounted, setMounted] = useState(false);
 
-  const user = await getUserByClerkId(clerkId);
-  if (!user) redirect("/onboarding");
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const recentRequests = await getRequests({ userId: user.id });
+  const mockUser = MOCK_USERS[0];
+  const recentRequests = MOCK_REQUESTS;
+
+  if (!mounted || !isLoaded) {
+    return (
+      <div className="space-y-8 p-6 animate-pulse">
+        <div className="h-48 rounded-2xl bg-slate-100" />
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 rounded-xl bg-slate-100" />
+          ))}
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <div className="lg:col-span-4 h-64 rounded-xl bg-slate-100" />
+          <div className="lg:col-span-3 space-y-6">
+            <div className="h-48 rounded-xl bg-slate-100" />
+            <div className="h-32 rounded-xl bg-slate-100" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 p-6">
       {/* Welcome Section with Gradient */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 sm:p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-emerald-500/10 to-teal-500/10 rounded-full blur-2xl" />
         
@@ -30,12 +57,13 @@ export default async function DashboardPage() {
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user.name}</h1>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Welcome back, {user?.fullName || mockUser.name}
+              </h1>
               <p className="text-slate-300 mt-1">Here's what's happening in your community today.</p>
             </div>
           </div>
           
-          {/* Quick Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-4 border-t border-white/10">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-400" />
@@ -57,36 +85,42 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats Cards Grid */}
+      {/* Stats Cards Grid with Animated Counters */}
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard 
           title="Total Requests" 
-          value={recentRequests.length} 
+          value={<AnimatedCounter target={recentRequests.length} />}
           description="Your active requests" 
           icon="file-text"
+          trend="+12%"
         />
         <StatsCard 
           title="Trust Score" 
-          value={user.trustScore} 
+          value={<AnimatedCounter target={mockUser.trustScore} />}
           description="Community reputation" 
           icon="shield-check"
+          trend="+5%"
         />
         <StatsCard 
           title="Badges" 
-          value={user.badges.length} 
+          value={<AnimatedCounter target={mockUser.badges.length} />}
           description="Earned achievements" 
           icon="award"
         />
         <StatsCard 
           title="Offers Received" 
-          value={recentRequests.reduce((acc, req) => acc + (req.helpOffers?.length || 0), 0)} 
+          value={<AnimatedCounter target={recentRequests.reduce((acc, req) => acc + (req.helpOffers?.length || 0), 0)} />}
           description="People ready to help" 
           icon="users"
+          trend="+3"
         />
       </div>
 
+      {/* Activity Chart */}
+      <ActivityChart />
+
       {/* Main Content Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+      <div className="grid gap-6 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
           <RecentActivity 
             requests={recentRequests} 
@@ -95,7 +129,9 @@ export default async function DashboardPage() {
         </div>
         <div className="lg:col-span-3 space-y-6">
           <QuickActions />
-          <AIInsightPanel userId={user.id} />
+          <ContinueWorking />
+          <RecentConversations />
+          <AIInsightPanel />
         </div>
       </div>
     </div>

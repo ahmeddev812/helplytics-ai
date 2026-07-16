@@ -1,6 +1,7 @@
 "use client";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 import { Menu, X, ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -94,6 +95,8 @@ export default function DashboardLayout({
             </div>
           </div>
         </main>
+
+        <CommandPalette />
 
         {/* Footer - Optional */}
         <footer className="hidden lg:block py-3 px-6 border-t border-slate-200/50 bg-white/30 backdrop-blur-sm">

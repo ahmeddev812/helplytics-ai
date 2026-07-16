@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Sparkles, Lightbulb } from "lucide-react";
 
-export function AIInsightPanel({ userId }: { userId: string }) {
+export function AIInsightPanel() {
   return (
     <Card className="bg-primary/5 border-primary/20">
       <CardHeader className="pb-2">
@@ -27,7 +27,7 @@ export function AIInsightPanel({ userId }: { userId: string }) {
           <div>
             <p className="text-sm font-medium">Community Opportunity</p>
             <p className="text-xs text-muted-foreground">
-              There are 5 open requests matching your "TypeScript" skill.
+              There are 5 open requests matching your &ldquo;TypeScript&rdquo; skill.
             </p>
           </div>
         </div>

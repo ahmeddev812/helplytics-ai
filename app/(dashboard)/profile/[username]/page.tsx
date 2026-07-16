@@ -1,52 +1,139 @@
-import { getUserByClerkId } from "@/server/actions/user.actions";
-import { getRequests } from "@/server/actions/requests.actions";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { RequestCard } from "@/components/requests/RequestCard";
-import { 
-  User, 
-  MapPin, 
-  Calendar, 
-  Award, 
-  ShieldCheck, 
-  Briefcase,
-  Mail,
-  Edit,
-  Sparkles,
-  Star,
-  TrendingUp,
-  Heart,
-  Link2,
-  CheckCircle,
-  Clock,
-  Users,
-  Zap
-} from "lucide-react";
+import { MOCK_USERS, MOCK_REQUESTS } from "@/lib/mock-data";
+import { useLocalStorage } from "@/lib/hooks";
+import { TRUST_SCORE } from "@/lib/constants";
+import { toast } from "sonner";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";  // ADD THIS IMPORT
+import { cn } from "@/lib/utils";
+import { 
+  User, MapPin, Calendar, Award, ShieldCheck, Briefcase,
+  Mail, Edit, Sparkles, Star, TrendingUp, Heart, Globe,
+  CheckCircle, Clock, Users, Zap, Save, X, Camera,
+  Code, MessageSquare, Share2, Link2, Palette, Languages,
+  Moon, Sun, Monitor
+} from "lucide-react";
 
-export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
-  const { username } = await params;
-  // Assuming clerkId is passed as username for simplicity in this prototype
-  const user = await getUserByClerkId(username);
-  if (!user) return <div>User not found</div>;
+interface UserProfile {
+  name: string;
+  bio: string;
+  role: string;
+  location: string;
+  skills: string[];
+  interests: string[];
+  website: string;
+  github: string;
+  twitter: string;
+  linkedin: string;
+  theme: "system" | "light" | "dark";
+  language: string;
+}
 
-  const userRequests = await getRequests({ userId: user.id });
+const DEFAULT_PROFILE: UserProfile = {
+  name: "",
+  bio: "",
+  role: "",
+  location: "",
+  skills: [],
+  interests: [],
+  website: "",
+  github: "",
+  twitter: "",
+  linkedin: "",
+  theme: "system",
+  language: "en",
+};
 
-  const getTrustScoreColor = (score: number) => {
-    if (score >= 900) return "text-emerald-500";
-    if (score >= 700) return "text-blue-500";
-    if (score >= 500) return "text-amber-500";
-    return "text-slate-500";
+const SKILL_SUGGESTIONS = ["React", "TypeScript", "Next.js", "Python", "UI/UX", "Marketing", "Writing", "Teaching"];
+const INTEREST_SUGGESTIONS = ["AI", "Machine Learning", "Web3", "Design", "Business", "Health", "Education"];
+
+export default function ProfilePage() {
+  const { user: clerkUser, isLoaded } = useUser();
+  const [mounted, setMounted] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useLocalStorage<UserProfile>("ha_user_profile", DEFAULT_PROFILE);
+  const [editForm, setEditForm] = useState<UserProfile>(profile);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && profile.name === "" && clerkUser?.fullName) {
+      const newProfile = { ...profile, name: clerkUser.fullName };
+      setProfile(newProfile);
+    }
+  }, [mounted, clerkUser]);
+
+  const mockUser = MOCK_USERS[0];
+  const userRequests = MOCK_REQUESTS;
+
+  const startEditing = () => {
+    setEditForm(profile);
+    setEditing(true);
   };
 
-  const getTrustScoreLevel = (score: number) => {
-    if (score >= 900) return "Elite Helper";
-    if (score >= 700) return "Trusted Member";
-    if (score >= 500) return "Active Contributor";
-    return "Rising Star";
+  const cancelEditing = () => {
+    setEditing(false);
   };
+
+  const saveProfile = () => {
+    setSaving(true);
+    setProfile(editForm);
+    setTimeout(() => {
+      setSaving(false);
+      setEditing(false);
+      toast.success("Profile saved locally!");
+    }, 500);
+  };
+
+  const addItem = (field: "skills" | "interests", item: string) => {
+    if (!editForm[field].includes(item)) {
+      setEditForm((prev) => ({
+        ...prev,
+        [field]: [...prev[field], item],
+      }));
+    }
+  };
+
+  const removeItem = (field: "skills" | "interests", item: string) => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: prev[field].filter((i) => i !== item),
+    }));
+  };
+
+  const displayName = profile.name || mockUser.name;
+  const displayRole = profile.role || mockUser.role;
+  const displayBio = profile.bio || mockUser.bio || "No bio provided yet. Tell the community about yourself!";
+  const displayLocation = profile.location || mockUser.location;
+  const displaySkills = profile.skills.length > 0 ? profile.skills : mockUser.skills;
+  const displayInterests = profile.interests.length > 0 ? profile.interests : mockUser.interests;
+  const trustScore = mockUser.trustScore;
+
+  if (!mounted || !isLoaded) {
+    return (
+      <div className="space-y-6 p-4 sm:p-6 animate-pulse">
+        <div className="h-64 rounded-2xl bg-slate-100" />
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="space-y-5">
+            <div className="h-48 rounded-2xl bg-slate-100" />
+            <div className="h-48 rounded-2xl bg-slate-100" />
+          </div>
+          <div className="lg:col-span-2 h-96 rounded-2xl bg-slate-100" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
@@ -55,42 +142,75 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-emerald-500/10 to-teal-500/10 rounded-full blur-2xl" />
         
-        {/* Cover Photo Area */}
-        <div className="h-32 sm:h-40 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20" />
+        <div className="h-32 sm:h-40 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 relative">
+          {editing && (
+            <button className="absolute bottom-3 right-3 p-2 rounded-lg bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors" aria-label="Change cover">
+              <Camera className="h-4 w-4 text-white" />
+            </button>
+          )}
+        </div>
         
         <div className="relative z-10 px-4 sm:px-8 pb-6 sm:pb-8 -mt-16 flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6">
-          {/* Avatar */}
-          <div className="relative">
+          <div className="relative group">
             <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-slate-700 to-slate-800 border-4 border-white dark:border-slate-900 flex items-center justify-center shadow-2xl">
               <User className="h-12 w-12 sm:h-16 sm:w-16 text-slate-400" />
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center">
               <CheckCircle className="h-3 w-3 text-white" />
             </div>
+            {editing && (
+              <button className="absolute inset-0 rounded-2xl bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Change avatar">
+                <Camera className="h-6 w-6 text-white" />
+              </button>
+            )}
           </div>
           
           <div className="flex-1 pb-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">{user.name}</h1>
+                {editing ? (
+                  <Input
+                    value={editForm.name}
+                    onChange={(e) => setEditForm((prev) => ({ ...prev, name: e.target.value }))}
+                    className="text-2xl font-bold bg-white/10 border-white/20 text-white placeholder:text-white/50 h-10 max-w-sm"
+                    placeholder="Your name"
+                  />
+                ) : (
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white">{displayName}</h1>
+                )}
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-slate-300 text-sm">@{user.clerkId?.slice(-8) || "user"}</span>
+                  <span className="text-slate-300 text-sm">@{clerkUser?.id?.slice(-8) || "user"}</span>
                   <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/10 backdrop-blur-sm">
                     <Star className="h-3 w-3 text-amber-400" />
-                    <span className="text-[10px] font-bold text-white">{getTrustScoreLevel(user.trustScore)}</span>
+                    <span className="text-[10px] font-bold text-white">{TRUST_SCORE.getLevel(trustScore)}</span>
                   </div>
                 </div>
               </div>
-              <Button size="sm" className="gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all">
-                <Edit className="h-4 w-4" /> Edit Profile
-              </Button>
+              {!editing ? (
+                <Button size="sm" className="gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all" onClick={startEditing}>
+                  <Edit className="h-4 w-4" /> Edit Profile
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={cancelEditing}>
+                    <X className="h-4 w-4" /> Cancel
+                  </Button>
+                  <Button size="sm" className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg" onClick={saveProfile} disabled={saving}>
+                    {saving ? (
+                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    Save
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Left Column: Info */}
         <div className="space-y-5">
           {/* About Card */}
           <Card className="border-none shadow-lg rounded-2xl overflow-hidden">
@@ -101,23 +221,55 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-slate-600 leading-relaxed">
-                {user.bio || "No bio provided yet. Tell the community about yourself!"}
-              </p>
+              {editing ? (
+                <Textarea
+                  value={editForm.bio}
+                  onChange={(e) => setEditForm((prev) => ({ ...prev, bio: e.target.value }))}
+                  className="min-h-[100px] rounded-xl border-slate-200"
+                  placeholder="Tell the community about yourself..."
+                />
+              ) : (
+                <p className="text-sm text-slate-600 leading-relaxed">{displayBio}</p>
+              )}
               <div className="space-y-3 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Briefcase className="h-4 w-4 text-primary" /> 
-                  <span className="font-medium">{user.role || "Community Member"}</span>
-                </div>
-                {user.location && (
-                  <div className="flex items-center gap-3 text-sm text-slate-600">
-                    <MapPin className="h-4 w-4 text-primary" /> 
-                    <span>{user.location}</span>
-                  </div>
+                {editing ? (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="h-4 w-4 text-primary shrink-0" />
+                      <Input
+                        value={editForm.role}
+                        onChange={(e) => setEditForm((prev) => ({ ...prev, role: e.target.value }))}
+                        className="h-9 text-sm rounded-lg border-slate-200"
+                        placeholder="Your role"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <MapPin className="h-4 w-4 text-primary shrink-0" />
+                      <Input
+                        value={editForm.location}
+                        onChange={(e) => setEditForm((prev) => ({ ...prev, location: e.target.value }))}
+                        className="h-9 text-sm rounded-lg border-slate-200"
+                        placeholder="Your location"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <Briefcase className="h-4 w-4 text-primary" /> 
+                      <span className="font-medium">{displayRole}</span>
+                    </div>
+                    {displayLocation && (
+                      <div className="flex items-center gap-3 text-sm text-slate-600">
+                        <MapPin className="h-4 w-4 text-primary" /> 
+                        <span>{displayLocation}</span>
+                      </div>
+                    )}
+                  </>
                 )}
                 <div className="flex items-center gap-3 text-sm text-slate-600">
                   <Calendar className="h-4 w-4 text-primary" /> 
-                  <span>Joined {user.createdAt ? format(new Date(user.createdAt), "MMMM yyyy") : "Recently"}</span>
+                  <span>Joined {format(new Date(), "MMMM yyyy")}</span>
                 </div>
               </div>
             </CardContent>
@@ -138,14 +290,12 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                   <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg mb-3">
                     <TrendingUp className="h-8 w-8 text-white" />
                   </div>
-                  <div className={cn("text-4xl font-black", getTrustScoreColor(user.trustScore))}>
-                    {user.trustScore}
+                  <div className={cn("text-4xl font-black", TRUST_SCORE.getColor(trustScore))}>
+                    {trustScore}
                   </div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">
-                    Trust Score
-                  </div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Trust Score</div>
                   <div className="mt-2 inline-block px-3 py-1 rounded-full bg-white shadow-sm text-[10px] font-bold text-slate-600">
-                    {getTrustScoreLevel(user.trustScore)}
+                    {TRUST_SCORE.getLevel(trustScore)}
                   </div>
                 </div>
               </div>
@@ -155,10 +305,10 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
                   <Award className="h-3.5 w-3.5" /> Badges Earned
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {!user.badges || user.badges.length === 0 ? (
-                    <p className="text-xs text-slate-400 italic">No badges earned yet. Start helping!</p>
+                  {mockUser.badges.length === 0 ? (
+                    <p className="text-xs text-slate-400 italic">No badges earned yet.</p>
                   ) : (
-                    user.badges.map((badge: string) => (
+                    mockUser.badges.map((badge: string) => (
                       <Badge key={badge} className="bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-0 px-3 py-1">
                         <Star className="h-2.5 w-2.5 mr-1" />
                         {badge}
@@ -181,41 +331,155 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
             <CardContent className="space-y-5">
               <div>
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Skills</h4>
-                <div className="flex flex-wrap gap-2">
-                  {!user.skills || user.skills.length === 0 ? (
-                    <p className="text-xs text-slate-400 italic">No skills added yet.</p>
-                  ) : (
-                    user.skills.map((skill: string) => (
-                      <Badge key={skill} className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-100 px-3 py-1">
-                        {skill}
-                      </Badge>
-                    ))
-                  )}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(editing ? editForm.skills : displaySkills).map((skill: string) => (
+                    <Badge key={skill} className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-blue-100 px-3 py-1">
+                      {skill}
+                      {editing && (
+                        <button onClick={() => removeItem("skills", skill)} className="ml-1 hover:text-red-500">
+                          <X className="h-2.5 w-2.5" />
+                        </button>
+                      )}
+                    </Badge>
+                  ))}
                 </div>
+                {editing && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {SKILL_SUGGESTIONS.filter((s) => !editForm.skills.includes(s)).map((skill) => (
+                      <button
+                        key={skill}
+                        onClick={() => addItem("skills", skill)}
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        + {skill}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Interests</h4>
-                <div className="flex flex-wrap gap-2">
-                  {!user.interests || user.interests.length === 0 ? (
-                    <p className="text-xs text-slate-400 italic">No interests added yet.</p>
-                  ) : (
-                    user.interests.map((interest: string) => (
-                      <Badge key={interest} variant="outline" className="border-slate-200 text-slate-600 px-3 py-1">
-                        {interest}
-                      </Badge>
-                    ))
-                  )}
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {(editing ? editForm.interests : displayInterests).map((interest: string) => (
+                    <Badge key={interest} variant="outline" className="border-slate-200 text-slate-600 px-3 py-1">
+                      {interest}
+                      {editing && (
+                        <button onClick={() => removeItem("interests", interest)} className="ml-1 hover:text-red-500">
+                          <X className="h-2.5 w-2.5" />
+                        </button>
+                      )}
+                    </Badge>
+                  ))}
                 </div>
+                {editing && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {INTEREST_SUGGESTIONS.filter((s) => !editForm.interests.includes(s)).map((interest) => (
+                      <button
+                        key={interest}
+                        onClick={() => addItem("interests", interest)}
+                        className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                      >
+                        + {interest}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Social Links Card */}
           <Card className="border-none shadow-lg rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                Social Links
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { icon: Globe, label: "Website", key: "website" as const, placeholder: "https://yoursite.com" },
+                { icon: Code, label: "GitHub", key: "github" as const, placeholder: "https://github.com/username" },
+                { icon: MessageSquare, label: "Twitter", key: "twitter" as const, placeholder: "https://twitter.com/username" },
+                { icon: Share2, label: "LinkedIn", key: "linkedin" as const, placeholder: "https://linkedin.com/in/username" },
+              ].map((link) => (
+                <div key={link.key} className="flex items-center gap-3">
+                  <link.icon className="h-4 w-4 text-slate-400 shrink-0" />
+                  {editing ? (
+                    <Input
+                      value={editForm[link.key]}
+                      onChange={(e) => setEditForm((prev) => ({ ...prev, [link.key]: e.target.value }))}
+                      className="h-9 text-sm rounded-lg border-slate-200"
+                      placeholder={link.placeholder}
+                    />
+                  ) : (
+                    <span className="text-sm text-slate-600">
+                      {profile[link.key] || <span className="text-slate-400 italic">Not set</span>}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Preferences Card */}
+          <Card className="border-none shadow-lg rounded-2xl overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Palette className="h-5 w-5 text-primary" />
+                Preferences
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Moon className="h-3 w-3" /> Theme
+                </h4>
+                <div className="flex gap-2">
+                  {[
+                    { value: "system" as const, icon: Monitor, label: "System" },
+                    { value: "light" as const, icon: Sun, label: "Light" },
+                    { value: "dark" as const, icon: Moon, label: "Dark" },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => editing && setEditForm((prev) => ({ ...prev, theme: option.value }))}
+                      disabled={!editing}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                        (editing ? editForm.theme : profile.theme) === option.value
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      )}
+                    >
+                      <option.icon className="h-3 w-3" />
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Languages className="h-3 w-3" /> Language
+                </h4>
+                <select
+                  value={editing ? editForm.language : profile.language}
+                  onChange={(e) => editing && setEditForm((prev) => ({ ...prev, language: e.target.value }))}
+                  disabled={!editing}
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-primary/30 disabled:opacity-50"
+                >
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  <option value="fr">French</option>
+                  <option value="de">German</option>
+                  <option value="ja">Japanese</option>
+                </select>
+              </div>
+            </CardContent>
           </Card>
         </div>
 
-        {/* Right Column: History */}
+        {/* Right Column */}
         <div className="lg:col-span-2 space-y-5">
           {/* Stats Row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -231,7 +495,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 text-center">
               <Star className="h-5 w-5 text-amber-500 mx-auto mb-1" />
-              <div className="text-xl font-bold text-slate-900">{user.badges?.length || 0}</div>
+              <div className="text-xl font-bold text-slate-900">{mockUser.badges.length}</div>
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Badges</div>
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 text-center">

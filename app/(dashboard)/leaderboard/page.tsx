@@ -1,4 +1,29 @@
-import { getLeaderboard } from "@/server/actions/user.actions";
+import { prisma } from "@/lib/prisma";
+
+async function getLeaderboard(limit = 20) {
+  try {
+    return await prisma.user.findMany({
+      orderBy: { trustScore: "desc" },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+        trustScore: true,
+        badges: true,
+        role: true,
+        skills: true,
+        location: true,
+        createdAt: true,
+      },
+    });
+  } catch {
+    const { MOCK_USERS } = await import("@/lib/mock-data");
+    return MOCK_USERS.sort((a: { trustScore: number }, b: { trustScore: number }) => b.trustScore - a.trustScore)
+      .slice(0, limit);
+  }
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Medal, Award, User, Crown, Star, TrendingUp, Zap, Shield, Sparkles } from "lucide-react";

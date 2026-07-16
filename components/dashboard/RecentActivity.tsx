@@ -18,7 +18,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function RecentActivity({ requests, className }: { requests: any[], className?: string }) {
+import { Request } from "@/types/backend-mock";
+
+export function RecentActivity({ requests, className }: { requests: Request[], className?: string }) {
   return (
     <Card className={cn("border-slate-100 shadow-sm overflow-hidden", className)}>
       <CardHeader className="border-b bg-slate-50/30 pb-4">

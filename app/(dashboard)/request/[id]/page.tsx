@@ -1,20 +1,27 @@
-import { auth } from "@clerk/nextjs/server";
-import { getRequestById } from "@/server/actions/requests.actions";
-import { getUserByClerkId } from "@/server/actions/user.actions";
+"use client";
+
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RequestOfferForm } from "@/components/requests/RequestOfferForm";
+import { CommentsSection } from "@/components/requests/CommentsSection";
+import { MOCK_REQUESTS } from "@/lib/mock-data";
+import { RequestStatus } from "@/types/backend-mock";
 import { formatDistanceToNow } from "date-fns";
-import { Bot, User, CheckCircle2, Clock, Shield, MessageCircle, Heart, ArrowLeft, Flag, Share2, ThumbsUp, Sparkles, Award, Calendar, MapPin, Link2 } from "lucide-react";
+import { toast } from "sonner";
+import { Bot, User, CheckCircle2, Clock, Shield, MessageCircle, Heart, ArrowLeft, Flag, Share2, ThumbsUp, Sparkles, Award, Calendar, MapPin, Link2, Edit3, Trash2, Archive, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useParams, useRouter } from "next/navigation";
 
-export default async function RequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const { userId: clerkId } = await auth();
-  const request = await getRequestById(id);
-  const user = clerkId ? await getUserByClerkId(clerkId) : null;
+export default function RequestDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const request = MOCK_REQUESTS.find(req => req.id === id) || MOCK_REQUESTS[0];
+  const [requestStatus, setRequestStatus] = useState(request.status);
+  const [showActions, setShowActions] = useState(false);
 
   if (!request) return (
     <div className="flex items-center justify-center min-h-[60vh]">
@@ -34,8 +41,8 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
     </div>
   );
 
-  const isOwner = user?.id === request.userId;
-  const canHelp = user?.role !== "NEED_HELP" && !isOwner;
+  const isOwner = true;
+  const canHelp = true;
 
   const getUrgencyConfig = (urgency: string) => {
     switch (urgency) {
@@ -80,6 +87,27 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
   const urgencyConfig = getUrgencyConfig(request.urgency);
 
+  const handleEdit = () => {
+    toast.info("Edit mode would open here");
+    setShowActions(false);
+  };
+
+  const handleDelete = () => {
+    toast.success("Request deleted");
+    setShowActions(false);
+    router.push("/explore");
+  };
+
+  const handleArchive = () => {
+    toast.success("Request archived");
+    setShowActions(false);
+  };
+
+  const handleResolve = () => {
+    setRequestStatus(RequestStatus.RESOLVED);
+    toast.success("Request marked as resolved!");
+  };
+
   return (
     <div className="space-y-6 p-4 sm:p-6 max-w-6xl mx-auto">
       {/* Back Navigation with Breadcrumb */}
@@ -92,13 +120,45 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
           Back to Explore
         </Link>
         
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xs text-slate-400">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>Active Request</span>
+            <span>•</span>
+            <span>ID: {id.slice(-8)}</span>
           </div>
-          <span>•</span>
-          <span>ID: {request.id.slice(-8)}</span>
+          
+          {/* Actions dropdown */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowActions(!showActions)}
+              className="h-8 w-8 rounded-lg"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+            {showActions && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setShowActions(false)} />
+                <div className="absolute right-0 top-full mt-1 z-20 w-44 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95">
+                  <button onClick={handleEdit} className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    <Edit3 className="h-3.5 w-3.5" /> Edit Request
+                  </button>
+                  <button onClick={handleArchive} className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    <Archive className="h-3.5 w-3.5" /> Archive
+                  </button>
+                  <button onClick={handleResolve} className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Mark Resolved
+                  </button>
+                  <div className="border-t border-slate-100" />
+                  <button onClick={handleDelete} className="w-full flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors">
+                    <Trash2 className="h-3.5 w-3.5" /> Delete Request
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -117,7 +177,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
               <Badge className={cn(urgencyConfig.bg, urgencyConfig.text, "border-0 px-3 py-1.5 text-xs font-medium rounded-full")}>
                 {urgencyConfig.icon} {urgencyConfig.label}
               </Badge>
-              {request.status === "RESOLVED" && (
+              {requestStatus === RequestStatus.RESOLVED && (
                 <Badge className="bg-gradient-to-r from-emerald-500 to-green-600 text-white border-0 px-3 py-1.5 text-xs font-medium rounded-full">
                   <CheckCircle2 className="h-3 w-3 mr-1" /> Solved
                 </Badge>
@@ -260,8 +320,9 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Help Offers Section */}
+        {/* Help Offers + Comments Section */}
         <div className="lg:col-span-2 space-y-5">
+          <CommentsSection requestId={id} />
           <Card className="border-0 shadow-lg rounded-2xl overflow-hidden">
             <CardHeader className="pb-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
               <CardTitle className="text-lg flex items-center gap-2">
@@ -279,7 +340,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
                   </div>
                   <p className="text-slate-500 font-medium">No help offers yet</p>
                   <p className="text-sm text-slate-400 mt-1">Be the first to offer help to this request!</p>
-                  {canHelp && request.status === "OPEN" && (
+                  {canHelp && requestStatus === RequestStatus.OPEN && (
                     <Button className="mt-4 gap-2 bg-gradient-to-r from-emerald-500 to-teal-600">
                       <Heart className="h-4 w-4" />
                       Offer Help
@@ -323,7 +384,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
                       <p className="text-sm text-slate-600 leading-relaxed pl-14">
                         {offer.message}
                       </p>
-                      {isOwner && request.status !== "RESOLVED" && (
+                      {isOwner && requestStatus !== RequestStatus.RESOLVED && (
                         <div className="flex gap-3 pl-14 mt-4">
                           <Button size="sm" variant="outline" className="h-8 text-xs gap-1 rounded-full">
                             <MessageCircle className="h-3 w-3" />
@@ -345,7 +406,7 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
 
         {/* Sidebar */}
         <div className="space-y-5">
-          {canHelp && request.status === "OPEN" && (
+          {canHelp && requestStatus === RequestStatus.OPEN && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-500">
               <RequestOfferForm requestId={request.id} />
             </div>
