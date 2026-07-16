@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     });
 
     return success(
-      users.map((u, i) => ({
+      users.map((u: { id: string; name: string | null; email: string | null; avatarUrl: string | null; trustScore: number; badges: string[]; role: string; skills: string[]; location: string | null; _count: { requests: number; helpOffers: number }; createdAt: Date }, i: number) => ({
         rank: i + 1,
         id: u.id,
         name: u.name,
