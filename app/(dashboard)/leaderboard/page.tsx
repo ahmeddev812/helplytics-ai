@@ -1,8 +1,21 @@
 import { prisma } from "@/lib/prisma";
 
-async function getLeaderboard(limit = 20) {
+interface LeaderboardEntry {
+  id: string;
+  name: string | null;
+  email: string;
+  avatarUrl: string | null;
+  trustScore: number;
+  badges: string[];
+  role: string;
+  skills: string[];
+  location: string | null;
+  createdAt: Date;
+}
+
+async function getLeaderboard(limit = 20): Promise<LeaderboardEntry[]> {
   try {
-    return await prisma.user.findMany({
+    const users = await prisma.user.findMany({
       orderBy: { trustScore: "desc" },
       take: limit,
       select: {
@@ -18,10 +31,11 @@ async function getLeaderboard(limit = 20) {
         createdAt: true,
       },
     });
+    return users as unknown as LeaderboardEntry[];
   } catch {
     const { MOCK_USERS } = await import("@/lib/mock-data");
-    return MOCK_USERS.sort((a: { trustScore: number }, b: { trustScore: number }) => b.trustScore - a.trustScore)
-      .slice(0, limit);
+    return MOCK_USERS.sort((a, b) => b.trustScore - a.trustScore)
+      .slice(0, limit) as unknown as LeaderboardEntry[];
   }
 }
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
