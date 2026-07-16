@@ -15,8 +15,16 @@ import {
   Download,
   Sparkles,
 } from "lucide-react";
-import type { AIConversation } from "@/lib/services";
-import { formatDate } from "@/lib/services";
+import { formatDate, generateId } from "@/lib/services";
+
+interface AIConversation {
+  id: string;
+  title: string;
+  messages: { id: string; role: "user" | "assistant"; content: string; timestamp: Date }[];
+  createdAt: Date;
+  updatedAt: Date;
+  favorite: boolean;
+}
 
 interface ConversationSidebarProps {
   conversations: AIConversation[];

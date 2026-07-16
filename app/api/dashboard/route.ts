@@ -1,10 +1,9 @@
 import { requireAuth } from "@/lib/api/auth";
 import { success, error } from "@/lib/api/response";
-import { MOCK_REQUESTS } from "@/lib/mock-data";
 
 export async function GET() {
   try {
-    const authUser = await requireAuth();
+    await requireAuth();
 
     return success({
       stats: {
@@ -16,7 +15,7 @@ export async function GET() {
         favorites: 0,
         trustScore: 0,
       },
-      recentActivity: MOCK_REQUESTS.slice(0, 5),
+      recentActivity: [],
       usage: {
         daily: { aiRequests: 0, promptsUsed: 0, exports: 0 },
         monthly: { aiRequests: 0, promptsUsed: 0, exports: 0 },

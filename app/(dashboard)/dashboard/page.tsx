@@ -10,14 +10,11 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { RecentConversations } from "@/components/dashboard/RecentConversations";
 import { ContinueWorking } from "@/components/dashboard/ContinueWorking";
-import { MOCK_REQUESTS } from "@/lib/mock-data";
-import { Sparkles, TrendingUp, Award, Users, Clock, Star } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const mounted = useMounted();
-
-  const recentRequests = MOCK_REQUESTS;
 
   if (!mounted || !isLoaded) {
     return (
@@ -58,25 +55,6 @@ export default function DashboardPage() {
               <p className="text-slate-300 mt-1">Here&apos;s what&apos;s happening in your community today.</p>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-4 border-t border-white/10">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-400" />
-              <span className="text-sm text-slate-300">Active for 2 weeks</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-amber-400" />
-              <span className="text-sm text-slate-300">Top 10% Helper</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-emerald-400" />
-              <span className="text-sm text-slate-300">+47% this month</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-purple-400" />
-              <span className="text-sm text-slate-300">15 connections</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -84,17 +62,15 @@ export default function DashboardPage() {
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard 
           title="Total Requests" 
-          value={<AnimatedCounter target={recentRequests.length} />}
+          value={<AnimatedCounter target={0} />}
           description="Your active requests" 
           icon="file-text"
-          trend="+12%"
         />
         <StatsCard 
           title="Trust Score" 
           value={<AnimatedCounter target={0} />}
           description="Community reputation" 
           icon="shield-check"
-          trend="+5%"
         />
         <StatsCard 
           title="Badges" 
@@ -104,10 +80,9 @@ export default function DashboardPage() {
         />
         <StatsCard 
           title="Offers Received" 
-          value={<AnimatedCounter target={recentRequests.reduce((acc, req) => acc + (req.helpOffers?.length || 0), 0)} />}
+          value={<AnimatedCounter target={0} />}
           description="People ready to help" 
           icon="users"
-          trend="+3"
         />
       </div>
 
@@ -118,7 +93,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-7">
         <div className="lg:col-span-4 space-y-6">
           <RecentActivity 
-            requests={recentRequests} 
+            requests={[]} 
             className="w-full" 
           />
         </div>

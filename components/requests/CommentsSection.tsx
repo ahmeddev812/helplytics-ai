@@ -19,13 +19,8 @@ interface CommentsSectionProps {
   requestId: string;
 }
 
-const MOCK_COMMENTS: Comment[] = [
-  { id: "c1", author: "Sarah Chen", content: "I've worked on similar issues before. The key is to properly structure your useEffect dependencies.", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) },
-  { id: "c2", author: "Mike Johnson", content: "Have you tried using useReducer instead? It might help with the complex state transitions.", timestamp: new Date(Date.now() - 1000 * 60 * 60) },
-];
-
 export function CommentsSection({ requestId }: CommentsSectionProps) {
-  const [comments, setComments] = useState<Comment[]>(MOCK_COMMENTS);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
   const handleSubmit = () => {

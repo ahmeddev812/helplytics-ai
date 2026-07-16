@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { offerHelp } from "@/server/actions/requests.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,10 +23,15 @@ export function RequestOfferForm({ requestId }: { requestId: string }) {
 
     setLoading(true);
     try {
-      await offerHelp(requestId, user.id, message);
+      const res = await fetch(`/api/requests/${requestId}/offer`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      if (!res.ok) throw new Error("Failed to send offer");
       toast.success("Help offer sent!");
       setMessage("");
-    } catch (error) {
+    } catch {
       toast.error("Failed to send offer");
     } finally {
       setLoading(false);

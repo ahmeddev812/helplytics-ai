@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequestCard } from "@/components/requests/RequestCard";
-import { MOCK_REQUESTS } from "@/lib/mock-data";
 import { useMounted, useLocalStorage } from "@/lib/hooks";
 import { TRUST_SCORE } from "@/lib/constants";
 import { toast } from "sonner";
@@ -70,7 +69,7 @@ export default function ProfilePage() {
     }
   }, [mounted, clerkUser]);
 
-  const userRequests = MOCK_REQUESTS;
+  const userRequests: any[] = [];
 
   const startEditing = () => {
     setEditForm(profile);

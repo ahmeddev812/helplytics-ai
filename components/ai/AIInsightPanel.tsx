@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bot, Sparkles, Lightbulb } from "lucide-react";
+import { Bot } from "lucide-react";
 
 export function AIInsightPanel() {
   return (
@@ -12,25 +12,10 @@ export function AIInsightPanel() {
           AI Insights
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex gap-3">
-          <Sparkles className="h-5 w-5 text-yellow-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium">Weekly Tip</p>
-            <p className="text-xs text-muted-foreground">
-              Requests with detailed descriptions and 3+ tags get 40% faster responses.
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-3">
-          <Lightbulb className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium">Community Opportunity</p>
-            <p className="text-xs text-muted-foreground">
-              There are 5 open requests matching your &ldquo;TypeScript&rdquo; skill.
-            </p>
-          </div>
-        </div>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">
+          Insights will appear here as you use the platform.
+        </p>
       </CardContent>
     </Card>
   );

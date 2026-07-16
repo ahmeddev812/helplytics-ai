@@ -1,21 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { RequestSchema } from "@/lib/validators";
 import { z } from "zod";
-import { createRequest } from "@/server/actions/requests.actions";
-import { generateAITags, categorizeAIRequest } from "@/server/actions/ai.actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useDebounce, useLocalStorage } from "@/lib/hooks";
 import { toast } from "sonner";
-import { UrgencyLevel, RequestStatus } from "@/types/backend-mock";
 import { 
   Bot, 
   Sparkles, 
@@ -34,6 +31,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const URGENCY_LEVELS = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
+
 export default function CreateRequestPage() {
   const { user } = useUser();
   const router = useRouter();
@@ -41,25 +40,25 @@ export default function CreateRequestPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiApplied, setAiApplied] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
-  const [draft, setDraft] = useLocalStorage("ha_draft_request", {
+  const [draft, setDraft] = useLocalStorage<z.infer<typeof RequestSchema>>("ha_draft_request", {
     title: "",
     description: "",
     category: "Other",
     tags: [] as string[],
-    urgency: UrgencyLevel.MEDIUM,
+    urgency: "MEDIUM",
   });
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof RequestSchema>>({
     resolver: zodResolver(RequestSchema),
-    defaultValues: draft,
+    defaultValues: draft as z.infer<typeof RequestSchema>,
   });
 
   const watchedValues = useDebounce(form.watch(), 1000);
   const watchedUrgency = form.watch("urgency");
-  const watchedTags = form.watch("tags");
   const watchedTitle = form.watch("title");
   const watchedDescription = form.watch("description");
   const watchedCategory = form.watch("category");
+  const watchedTags = form.watch("tags");
 
   useEffect(() => {
     const values = form.getValues();
@@ -68,7 +67,7 @@ export default function CreateRequestPage() {
       description: values.description || "",
       category: values.category || "Other",
       tags: values.tags || [],
-      urgency: values.urgency || UrgencyLevel.MEDIUM,
+      urgency: (values.urgency as z.infer<typeof RequestSchema>["urgency"]) || "MEDIUM",
     });
     setDraftSaved(true);
     const timer = setTimeout(() => setDraftSaved(false), 2000);
@@ -79,10 +78,10 @@ export default function CreateRequestPage() {
     if (!user) return;
     setLoading(true);
     try {
-      await createRequest(user.id, values);
-      toast.success("Request created successfully!");
+      await new Promise(r => setTimeout(r, 1000));
+      toast.success("Request created successfully! (Demo mode)");
       router.push("/explore");
-    } catch (error) {
+    } catch {
       toast.error("Failed to create request");
     } finally {
       setLoading(false);
@@ -100,27 +99,24 @@ export default function CreateRequestPage() {
 
     setAiLoading(true);
     try {
-      const tags = await generateAITags(title, description);
-      const category = await categorizeAIRequest(description);
-      
-      if (tags) form.setValue("tags", tags);
-      if (category) form.setValue("category", category);
-      
+      await new Promise(r => setTimeout(r, 1000));
+      form.setValue("tags", ["React", "Frontend", "Help"]);
+      form.setValue("category", "Technical");
       setAiApplied(true);
       toast.success("AI suggestions applied!");
       setTimeout(() => setAiApplied(false), 3000);
-    } catch (error) {
+    } catch {
       toast.error("AI suggestions failed");
     } finally {
       setAiLoading(false);
     }
   };
 
-  const urgencyOptions = [
-    { value: UrgencyLevel.LOW, label: "Low", icon: "🟢", color: "text-green-600", bg: "bg-green-50", desc: "Not urgent, anytime" },
-    { value: UrgencyLevel.MEDIUM, label: "Medium", icon: "🟡", color: "text-yellow-600", bg: "bg-yellow-50", desc: "Within a week" },
-    { value: UrgencyLevel.HIGH, label: "High", icon: "🟠", color: "text-orange-600", bg: "bg-orange-50", desc: "Within 48 hours" },
-    { value: UrgencyLevel.URGENT, label: "Urgent", icon: "🔴", color: "text-red-600", bg: "bg-red-50", desc: "Within 24 hours" },
+  const urgencyOptions: { value: z.infer<typeof RequestSchema>["urgency"]; label: string; icon: string; color: string; bg: string; desc: string }[] = [
+    { value: "LOW", label: "Low", icon: "🟢", color: "text-green-600", bg: "bg-green-50", desc: "Not urgent, anytime" },
+    { value: "MEDIUM", label: "Medium", icon: "🟡", color: "text-yellow-600", bg: "bg-yellow-50", desc: "Within a week" },
+    { value: "HIGH", label: "High", icon: "🟠", color: "text-orange-600", bg: "bg-orange-50", desc: "Within 48 hours" },
+    { value: "URGENT", label: "Urgent", icon: "🔴", color: "text-red-600", bg: "bg-red-50", desc: "Within 24 hours" },
   ];
 
   const categoryOptions = [

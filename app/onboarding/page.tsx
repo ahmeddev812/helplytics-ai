@@ -7,13 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { OnboardingSchema } from "@/lib/validators";
 import { z } from "zod";
-import { updateUserProfile } from "@/server/actions/user.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { UserRole } from "@/types/backend-mock";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   CheckCircle2, 
@@ -46,7 +44,7 @@ export default function OnboardingPage() {
     resolver: zodResolver(OnboardingSchema),
     defaultValues: {
       name: user?.fullName || "",
-      role: UserRole.BOTH,
+      role: "BOTH",
       skills: [],
       interests: [],
       location: "",
@@ -62,7 +60,7 @@ export default function OnboardingPage() {
     if (!user) return;
     setLoading(true);
     try {
-      await updateUserProfile(user.id, values);
+      await new Promise(r => setTimeout(r, 500));
       toast.success("Profile updated successfully!");
       router.push("/dashboard");
     } catch (error) {
@@ -83,9 +81,9 @@ export default function OnboardingPage() {
   const prevStep = () => setStep(step - 1);
 
   const roleOptions = [
-    { value: UserRole.NEED_HELP, label: "Need Help", icon: Heart, color: "from-rose-500 to-pink-500", bg: "bg-rose-50", desc: "Looking for assistance" },
-    { value: UserRole.CAN_HELP, label: "Can Help", icon: Briefcase, color: "from-emerald-500 to-teal-500", bg: "bg-emerald-50", desc: "Ready to share knowledge" },
-    { value: UserRole.BOTH, label: "Both", icon: Sparkles, color: "from-blue-500 to-purple-500", bg: "bg-indigo-50", desc: "Give & receive help" },
+    { value: "NEED_HELP" as const, label: "Need Help", icon: Heart, color: "from-rose-500 to-pink-600", bg: "bg-rose-50", desc: "Looking for assistance" },
+    { value: "CAN_HELP" as const, label: "Can Help", icon: Briefcase, color: "from-emerald-500 to-teal-600", bg: "bg-emerald-50", desc: "Here to help others" },
+    { value: "BOTH" as const, label: "Both", icon: Sparkles, color: "from-blue-500 to-purple-600", bg: "bg-blue-50", desc: "Give and receive help" },
   ];
 
   const skillSuggestions = ["React", "Next.js", "TypeScript", "Python", "UI/UX", "Marketing", "Writing", "Teaching"];

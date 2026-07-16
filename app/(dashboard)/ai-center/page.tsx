@@ -2,11 +2,25 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Message, ConversationSidebar, SuggestedPrompts, PromptInput } from "@/components/ai-center";
-import { simulateStreamingResponse, simulateAIResponse } from "@/lib/services";
 import { useLocalStorage, useMediaQuery, useKeyboardShortcut } from "@/lib/hooks";
 import { generateId } from "@/lib/services";
-import type { AIMessage, AIConversation } from "@/lib/services";
 import { toast } from "sonner";
+
+interface AIMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+}
+
+interface AIConversation {
+  id: string;
+  title: string;
+  messages: AIMessage[];
+  createdAt: Date;
+  updatedAt: Date;
+  favorite: boolean;
+}
 import { cn } from "@/lib/utils";
 import {
   Bot,
@@ -116,7 +130,18 @@ export default function AICenterPage() {
       setIsGenerating(true);
       setStreamingContent("");
 
-      const fullResponse = await simulateAIResponse(content, convId);
+      let fullResponse = "";
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: content }),
+        });
+        const data = await res.json();
+        fullResponse = data.data?.response || "No response generated.";
+      } catch {
+        fullResponse = "Sorry, I couldn't process your request. Please try again.";
+      }
 
       const aiMessage: AIMessage = {
         id: generateId(),
@@ -158,7 +183,18 @@ export default function AICenterPage() {
     setIsGenerating(true);
     setStreamingContent("");
 
-    const response = await simulateAIResponse(lastUserMsg.content, conv.id);
+    let response = "";
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: lastUserMsg.content }),
+      });
+      const data = await res.json();
+      response = data.data?.response || "No response generated.";
+    } catch {
+      response = "Sorry, I couldn't process your request. Please try again.";
+    }
 
     const newMessage: AIMessage = {
       id: generateId(),
@@ -478,7 +514,7 @@ export default function AICenterPage() {
                 isGenerating={isGenerating}
               />
               <p className="text-center text-[9px] text-slate-400 mt-2">
-                AI responses are simulated for demonstration. Press Ctrl+N for new conversation.
+                Powered by OpenRouter AI. Press Ctrl+N for new conversation.
               </p>
             </div>
           </div>

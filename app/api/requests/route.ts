@@ -1,7 +1,6 @@
 import { requireAuth } from "@/lib/api/auth";
 import { success, error } from "@/lib/api/response";
 import { checkRateLimit, getRateLimitKey } from "@/lib/api/rate-limit";
-import { MOCK_REQUESTS } from "@/lib/mock-data";
 import { z } from "zod";
 
 const CreateRequestSchema = z.object({
@@ -13,28 +12,10 @@ const CreateRequestSchema = z.object({
   aiSummary: z.string().optional(),
 });
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await requireAuth();
-    const { searchParams } = new URL(req.url);
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "10")));
-
-    let filtered = [...MOCK_REQUESTS];
-    const status = searchParams.get("status");
-    const category = searchParams.get("category");
-    const urgency = searchParams.get("urgency");
-    const search = searchParams.get("search");
-
-    if (status) filtered = filtered.filter((r) => r.status === status);
-    if (category) filtered = filtered.filter((r) => r.category === category);
-    if (urgency) filtered = filtered.filter((r) => r.urgency === urgency);
-    if (search) filtered = filtered.filter((r) => r.title.toLowerCase().includes(search.toLowerCase()));
-
-    const total = filtered.length;
-    const paginated = filtered.slice((page - 1) * limit, page * limit);
-
-    return success(paginated, 200, { page, limit, total, totalPages: Math.ceil(total / limit) });
+    return success([], 200, { page: 1, limit: 10, total: 0, totalPages: 0 });
   } catch (err) {
     return error(err);
   }

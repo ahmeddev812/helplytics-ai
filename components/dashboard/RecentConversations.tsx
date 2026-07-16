@@ -1,16 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Bot, ArrowRight, Clock } from "lucide-react";
+import { Bot, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/lib/services";
-
-const MOCK_CONVERSATIONS = [
-  { id: "c1", title: "Optimizing React hooks performance", date: new Date(Date.now() - 1000 * 60 * 30), count: 4 },
-  { id: "c2", title: "Writing a professional response", date: new Date(Date.now() - 1000 * 60 * 120), count: 2 },
-  { id: "c3", title: "Generating tags for new request", date: new Date(Date.now() - 1000 * 60 * 60 * 5), count: 3 },
-];
 
 export function RecentConversations() {
   return (
@@ -32,32 +24,13 @@ export function RecentConversations() {
           </Link>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="divide-y divide-slate-100">
-          {MOCK_CONVERSATIONS.map((conv) => (
-            <Link
-              key={conv.id}
-              href="/ai-center"
-              className="flex items-center gap-3 p-4 hover:bg-slate-50/80 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-100 flex items-center justify-center">
-                <Bot className="h-5 w-5 text-blue-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-primary transition-colors">
-                  {conv.title}
-                </h4>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Clock className="h-2.5 w-2.5" />
-                    {formatDate(conv.date, "relative")}
-                  </span>
-                  <span className="text-[10px] text-slate-400">{conv.count} messages</span>
-                </div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-primary transition-colors" />
-            </Link>
-          ))}
+      <CardContent className="p-4">
+        <div className="text-center py-8">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+            <Bot className="h-6 w-6 text-slate-400" />
+          </div>
+          <p className="text-sm text-slate-500 font-medium">No recent AI chats</p>
+          <p className="text-xs text-slate-400 mt-1">Start a conversation in AI Center.</p>
         </div>
       </CardContent>
     </Card>

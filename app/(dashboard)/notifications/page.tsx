@@ -25,13 +25,7 @@ interface Notification {
   read: boolean;
 }
 
-const INITIAL_NOTIFICATIONS: Notification[] = [
-  { id: "1", type: "offer", title: "New Help Offer", description: "John Doe offered to help with 'React Hooks problem'", timestamp: new Date(Date.now() - 1000 * 60 * 15), read: false },
-  { id: "2", type: "message", title: "New Message", description: "Jane Smith sent you a message regarding 'Python Review'", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), read: false },
-  { id: "3", type: "resolved", title: "Request Resolved", description: "Your request 'UI/UX Feedback' has been marked as solved", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), read: true },
-  { id: "4", type: "system", title: "Trust Score Increased", description: "Your trust score increased by 50 points!", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48), read: true },
-  { id: "5", type: "badge", title: "New Badge Earned!", description: "You've earned the 'Super Helper' badge for helping 10 people.", timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72), read: true },
-];
+const INITIAL_NOTIFICATIONS: Notification[] = [];
 
 const NOTIFICATION_ICONS = {
   offer: UserPlus,

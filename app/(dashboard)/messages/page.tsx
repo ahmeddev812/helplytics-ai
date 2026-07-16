@@ -30,68 +30,12 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
-// Mock conversation data for the UI
-const MOCK_CONVERSATIONS = [
-  {
-    id: "1",
-    user: {
-      name: "John Doe",
-      avatar: null,
-      status: "online",
-      trustScore: 850,
-      role: "Expert Helper",
-    },
-    lastMessage: "I can help you with the React hooks problem. When are you free?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    unread: 2,
-    requestId: "req1",
-    requestTitle: "Help with React Hooks",
-  },
-  {
-    id: "2",
-    user: {
-      name: "Jane Smith",
-      avatar: null,
-      status: "offline",
-      trustScore: 920,
-      role: "Top Contributor",
-    },
-    lastMessage: "The pandas script looks much better now, thanks!",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    unread: 0,
-    requestId: "req2",
-    requestTitle: "Python Data Analysis Review",
-  },
-  {
-    id: "3",
-    user: {
-      name: "Alex Johnson",
-      avatar: null,
-      status: "online",
-      trustScore: 780,
-      role: "Community Leader",
-    },
-    lastMessage: "Can we hop on a quick call to discuss the requirements?",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    unread: 0,
-    requestId: "req3",
-    requestTitle: "UI/UX Feedback for Dashboard",
-  },
-];
-
-const MOCK_MESSAGES = [
-  { id: "m1", senderId: "other", content: "Hi there! I saw your request about React hooks. I specialize in React and would love to help!", timestamp: new Date(Date.now() - 1000 * 60 * 60) },
-  { id: "m2", senderId: "me", content: "Hey! Yes, I'm struggling with some complex state transitions using useEffect.", timestamp: new Date(Date.now() - 1000 * 60 * 45) },
-  { id: "m3", senderId: "other", content: "I can help you with that. When are you free for a quick screen share?", timestamp: new Date(Date.now() - 1000 * 60 * 30) },
-  { id: "m4", senderId: "me", content: "I'm free right now actually. That would be great!", timestamp: new Date(Date.now() - 1000 * 60 * 15) },
-];
-
 export default function MessagesPage() {
   const { user } = useUser();
   const mounted = useMounted();
-  const [selectedChat, setSelectedChat] = useState<typeof MOCK_CONVERSATIONS[0] | null>(MOCK_CONVERSATIONS[0]);
+  const [selectedChat, setSelectedChat] = useState<any>(null);
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState(MOCK_MESSAGES);
+  const [messages, setMessages] = useState<any[]>([]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -162,64 +106,15 @@ export default function MessagesPage() {
           {/* Conversations List */}
           <ScrollArea className="flex-1">
             <div className="flex flex-col p-2">
-              {MOCK_CONVERSATIONS.map((chat, idx) => (
-                <button
-                  key={chat.id}
-                  onClick={() => {
-                    setSelectedChat(chat);
-                    setIsMobileSidebarOpen(false);
-                  }}
-                  className={cn(
-                    "group relative p-4 flex gap-3 text-left transition-all duration-200 rounded-xl mb-1",
-                    selectedChat?.id === chat.id 
-                      ? "bg-gradient-to-r from-blue-50 to-purple-50 shadow-md border border-blue-100" 
-                      : "hover:bg-slate-50 hover:shadow-sm"
-                  )}
-                >
-                  {/* Active Indicator */}
-                  {selectedChat?.id === chat.id && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-gradient-to-b from-blue-500 to-purple-600" />
-                  )}
-                  
-                  {/* Avatar */}
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center shadow-inner">
-                      <User className="h-6 w-6 text-slate-500" />
-                    </div>
-                    {chat.user.status === "online" && (
-                      <span className="absolute bottom-0.5 right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white" />
-                    )}
+              {[].length === 0 && (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
+                    <MessageSquare className="h-8 w-8 text-slate-400" />
                   </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start mb-1">
-                      <div>
-                        <span className="font-bold text-sm truncate block">{chat.user.name}</span>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Shield className="h-2.5 w-2.5 text-primary" />
-                          <span className={cn("text-[9px] font-bold", getTrustScoreColor(chat.user.trustScore))}>
-                            {chat.user.trustScore}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="text-[9px] text-slate-400 shrink-0 ml-2">
-                        {formatDistanceToNow(chat.timestamp, { addSuffix: false }).replace('about ', '')}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center gap-2">
-                      <p className="text-xs text-slate-500 truncate leading-relaxed">
-                        {chat.lastMessage}
-                      </p>
-                      {chat.unread > 0 && (
-                        <span className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[18px] text-center shadow-sm">
-                          {chat.unread}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              ))}
+                  <p className="text-sm font-medium text-slate-500">No conversations yet</p>
+                  <p className="text-xs text-slate-400 mt-1 max-w-[200px]">Start by offering help on a request or creating one.</p>
+                </div>
+              )}
             </div>
           </ScrollArea>
 

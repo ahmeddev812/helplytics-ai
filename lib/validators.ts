@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { UserRole, UrgencyLevel } from "@/types/backend-mock";
 
 export const OnboardingSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  role: z.nativeEnum(UserRole),
+  role: z.enum(["NEED_HELP", "CAN_HELP", "BOTH"]),
   skills: z.array(z.string()).min(1, "At least one skill is required"),
   interests: z.array(z.string()).min(1, "At least one interest is required"),
   location: z.string().optional(),
@@ -15,7 +14,7 @@ export const RequestSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters"),
   category: z.string().min(1, "Category is required"),
   tags: z.array(z.string()).min(1, "At least one tag is required"),
-  urgency: z.nativeEnum(UrgencyLevel),
+  urgency: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
 });
 
 export const HelpOfferSchema = z.object({
