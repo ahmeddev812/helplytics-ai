@@ -105,7 +105,7 @@ export default async function LeaderboardPage() {
                 <p className="text-2xl font-bold text-slate-700 mt-2">{leaderboard[1].trustScore}</p>
                 <p className="text-xs text-slate-500">Trust Score</p>
                 <div className="flex flex-wrap gap-1 justify-center mt-3">
-                  {leaderboard[1].badges.slice(0, 2).map((badge) => (
+                  {leaderboard[1].badges.slice(0, 2).map((badge: string) => (
                     <Badge key={badge} variant="secondary" className="text-[10px]">
                       {badge}
                     </Badge>
@@ -133,7 +133,7 @@ export default async function LeaderboardPage() {
               </p>
               <p className="text-xs text-slate-500">Trust Score</p>
               <div className="flex flex-wrap gap-1 justify-center mt-3">
-                {leaderboard[0].badges.slice(0, 3).map((badge) => (
+                {leaderboard[0].badges.slice(0, 3).map((badge: string) => (
                   <Badge key={badge} className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white text-[10px] border-0">
                     {badge}
                   </Badge>
@@ -156,7 +156,7 @@ export default async function LeaderboardPage() {
                 <p className="text-2xl font-bold text-slate-700 mt-2">{leaderboard[2].trustScore}</p>
                 <p className="text-xs text-slate-500">Trust Score</p>
                 <div className="flex flex-wrap gap-1 justify-center mt-3">
-                  {leaderboard[2].badges.slice(0, 2).map((badge) => (
+                  {leaderboard[2].badges.slice(0, 2).map((badge: string) => (
                     <Badge key={badge} variant="secondary" className="text-[10px]">
                       {badge}
                     </Badge>
@@ -199,7 +199,7 @@ export default async function LeaderboardPage() {
                   <div>
                     <h3 className="font-bold text-slate-900">{user.name}</h3>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {user.badges.slice(0, 3).map((badge) => (
+                      {user.badges.slice(0, 3).map((badge: string) => (
                         <Badge key={badge} variant="secondary" className="text-[9px] px-1.5">
                           {badge}
                         </Badge>
