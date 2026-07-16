@@ -57,15 +57,11 @@ const INTEREST_SUGGESTIONS = ["AI", "Machine Learning", "Web3", "Design", "Busin
 
 export default function ProfilePage() {
   const { user: clerkUser, isLoaded } = useUser();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useLocalStorage<UserProfile>("ha_user_profile", DEFAULT_PROFILE);
   const [editForm, setEditForm] = useState<UserProfile>(profile);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (mounted && profile.name === "" && clerkUser?.fullName) {

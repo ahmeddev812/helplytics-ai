@@ -30,7 +30,7 @@ export default function RequestDetailPage() {
           <Bot className="h-10 w-10 text-slate-400" />
         </div>
         <h2 className="text-xl font-bold text-slate-900 mb-2">Request Not Found</h2>
-        <p className="text-slate-500">The request you're looking for doesn't exist or has been removed.</p>
+        <p className="text-slate-500">The request you&apos;re looking for doesn&apos;t exist or has been removed.</p>
         <Link href="/explore" className="inline-block mt-6">
           <Button className="gap-2">
             <ArrowLeft className="h-4 w-4" />
@@ -258,7 +258,7 @@ export default function RequestDetailPage() {
                     <Sparkles className="h-3 w-3 text-indigo-400" />
                   </div>
                   <p className="text-sm text-slate-700 leading-relaxed italic">
-                    "{request.aiSummary}"
+                    &ldquo;{request.aiSummary}&rdquo;
                   </p>
                 </div>
               </div>
@@ -306,15 +306,15 @@ export default function RequestDetailPage() {
           <div className="text-[10px] font-medium text-slate-500">Help Offers</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 text-center">
-          <div className="text-xl font-bold text-emerald-600">{(request as any).views ?? 42}</div>
+          <div className="text-xl font-bold text-emerald-600">{(request as Request & { views?: number }).views ?? 42}</div>
           <div className="text-[10px] font-medium text-slate-500">Total Views</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 text-center">
-          <div className="text-xl font-bold text-amber-600">{Math.floor((request as any).trustImpact ?? 0)}</div>
+          <div className="text-xl font-bold text-amber-600">{Math.floor((request as Request & { trustImpact?: number }).trustImpact ?? 0)}</div>
           <div className="text-[10px] font-medium text-slate-500">Trust Impact</div>
         </div>
         <div className="p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 text-center">
-          <div className="text-xl font-bold text-purple-600">{(request as any).shares ?? 8}</div>
+          <div className="text-xl font-bold text-purple-600">{(request as Request & { shares?: number }).shares ?? 8}</div>
           <div className="text-[10px] font-medium text-slate-500">Shares</div>
         </div>
       </div>
@@ -349,7 +349,7 @@ export default function RequestDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {request.helpOffers?.map((offer: any, idx: number) => (
+                  {request.helpOffers?.map((offer, idx) => (
                     <div 
                       key={offer.id} 
                       className="group p-5 rounded-xl border border-slate-200 hover:border-primary/30 hover:shadow-md transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"

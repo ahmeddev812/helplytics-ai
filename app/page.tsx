@@ -69,8 +69,22 @@ const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: str
   );
 };
 
-// Testimonial Card Component
-const TestimonialCard = ({ name, role, content, rating, delay }: any) => (
+interface TestimonialProps {
+  name: string;
+  role: string;
+  content: string;
+  rating?: number;
+  delay?: number;
+}
+
+interface FeatureProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  color: string;
+}
+
+const TestimonialCard = ({ name, role, content, delay }: TestimonialProps) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -97,8 +111,7 @@ const TestimonialCard = ({ name, role, content, rating, delay }: any) => (
   </motion.div>
 );
 
-// Create Request Feature Card
-const CreateRequestFeature = ({ icon: Icon, title, description, color }: any) => (
+const CreateRequestFeature = ({ icon: Icon, title, description, color }: FeatureProps) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -256,7 +269,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="max-w-2xl mx-auto text-lg sm:text-xl text-slate-500 mb-10 leading-relaxed"
             >
-              The world's first AI-native platform for community collaboration. 
+              The world&apos;s first AI-native platform for community collaboration. 
               Find expert help in seconds or grow your reputation by helping others.
             </motion.p>
             

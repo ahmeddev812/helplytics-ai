@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       return error({ message: "Message is required", statusCode: 400 });
     }
 
-    let messages: { role: "user" | "assistant" | "system"; content: string }[] = [
+    const messages: { role: "user" | "assistant" | "system"; content: string }[] = [
       { role: "system", content: SYSTEM_PROMPT },
     ];
 

@@ -8,8 +8,28 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { User, Send, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function ChatInterface({ requestId, currentUserId, otherUser }: any) {
-  const [messages, setMessages] = useState<any[]>([]);
+interface ChatMessage {
+  id: string;
+  content: string;
+  senderId: string;
+  createdAt: Date;
+}
+
+interface ChatUser {
+  name: string;
+  avatar?: string | null;
+}
+
+export function ChatInterface({
+  requestId,
+  currentUserId,
+  otherUser,
+}: {
+  requestId?: string;
+  currentUserId?: string;
+  otherUser?: ChatUser;
+}) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
   const handleSend = () => {

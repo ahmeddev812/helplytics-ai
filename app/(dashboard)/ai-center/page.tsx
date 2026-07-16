@@ -25,7 +25,7 @@ import {
 
 export default function AICenterPage() {
   const isMobile = useMediaQuery("(max-width: 1023px)");
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,10 +40,6 @@ export default function AICenterPage() {
   );
 
   const activeConversation = conversations.find((c) => c.id === activeId) || null;
-
-  useEffect(() => {
-    setSidebarOpen(!isMobile);
-  }, [isMobile]);
 
   useKeyboardShortcut({
     key: "n",

@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { RequestSchema } from "@/lib/validators";
+import { z } from "zod";
 import { createRequest } from "@/server/actions/requests.actions";
 import { generateAITags, categorizeAIRequest } from "@/server/actions/ai.actions";
 import { Button } from "@/components/ui/button";
@@ -69,7 +70,7 @@ export default function CreateRequestPage() {
     return () => clearTimeout(timer);
   }, [watchedValues]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof RequestSchema>) => {
     if (!user) return;
     setLoading(true);
     try {
@@ -334,7 +335,7 @@ export default function CreateRequestPage() {
                   <ul className="text-[10px] text-slate-600 space-y-1">
                     <li>• Be specific about what you need help with</li>
                     <li>• Include any deadlines or time constraints</li>
-                    <li>• Mention what you've already tried to solve the problem</li>
+                    <li>• Mention what you&apos;ve already tried to solve the problem</li>
                     <li>• Add relevant tags to help people find your request</li>
                   </ul>
                 </div>

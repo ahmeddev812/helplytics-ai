@@ -2,21 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 
+function readValue<T>(key: string, initialValue: T): T {
+  try {
+    const item = window.localStorage.getItem(key);
+    return item ? JSON.parse(item) : initialValue;
+  } catch {
+    return initialValue;
+  }
+}
+
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      if (item) {
-        setStoredValue(JSON.parse(item));
-      }
-    } catch {
-      console.warn(`Error reading localStorage key "${key}":`);
-    }
+    setStoredValue(readValue(key, initialValue));
     setIsHydrated(true);
-  }, [key]);
+  }, [key, initialValue]);
 
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {

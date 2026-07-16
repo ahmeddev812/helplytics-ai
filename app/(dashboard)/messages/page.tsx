@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useMounted } from "@/lib/hooks";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,15 +88,14 @@ const MOCK_MESSAGES = [
 
 export default function MessagesPage() {
   const { user } = useUser();
-  const [mounted, setMounted] = useState(false);
-  const [selectedChat, setSelectedChat] = useState<any>(null);
+  const mounted = useMounted();
+  const [selectedChat, setSelectedChat] = useState<typeof MOCK_CONVERSATIONS[0] | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState(MOCK_MESSAGES);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
     setSelectedChat(MOCK_CONVERSATIONS[0]);
   }, []);
 
@@ -303,7 +303,7 @@ export default function MessagesPage() {
               </div>
 
               {/* Messages Area */}
-              <ScrollArea className="flex-1 px-4 py-6" ref={scrollRef as any}>
+              <ScrollArea className="flex-1 px-4 py-6" ref={scrollRef}>
                 <div className="space-y-4 max-w-3xl mx-auto">
                   {/* Conversation Start Indicator */}
                   <div className="flex justify-center my-4">

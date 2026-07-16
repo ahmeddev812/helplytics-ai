@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { OnboardingSchema } from "@/lib/validators";
+import { z } from "zod";
 import { updateUserProfile } from "@/server/actions/user.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,7 +54,7 @@ export default function OnboardingPage() {
     },
   });
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof OnboardingSchema>) => {
     if (!user) return;
     setLoading(true);
     try {
@@ -110,7 +111,7 @@ export default function OnboardingPage() {
             <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Welcome Aboard</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Let's get you{" "}
+            Let&apos;s get you{" "}
             <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               started
             </span>
@@ -273,7 +274,7 @@ export default function OnboardingPage() {
                           </button>
                         ))}
                       </div>
-                      <p className="text-[10px] text-slate-400">Add skills you're proficient in to help others.</p>
+                      <p className="text-[10px] text-slate-400">Add skills you&apos;re proficient in to help others.</p>
                     </div>
 
                     {/* Interests */}

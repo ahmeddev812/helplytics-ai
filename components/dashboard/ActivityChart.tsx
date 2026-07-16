@@ -26,7 +26,7 @@ export function ActivityChart() {
               Activity Overview
             </CardTitle>
             <CardDescription className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              This week's engagement
+              This week&apos;s engagement
             </CardDescription>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-[10px] font-bold text-emerald-600">

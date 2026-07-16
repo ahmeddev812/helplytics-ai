@@ -115,7 +115,7 @@ export default function SupportPage() {
             <div>
               <CardTitle className="text-lg">Contact Us</CardTitle>
               <CardDescription className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Can't find what you're looking for? Send us a message
+                Can&apos;t find what you&apos;re looking for? Send us a message
               </CardDescription>
             </div>
           </div>

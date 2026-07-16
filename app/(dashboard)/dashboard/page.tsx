@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { useMounted } from "@/lib/hooks";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -15,11 +15,7 @@ import { Sparkles, TrendingUp, Award, Users, Clock, Star } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   const mockUser = MOCK_USERS[0];
   const recentRequests = MOCK_REQUESTS;
@@ -60,7 +56,7 @@ export default function DashboardPage() {
               <h1 className="text-3xl font-bold tracking-tight">
                 Welcome back, {user?.fullName || mockUser.name}
               </h1>
-              <p className="text-slate-300 mt-1">Here's what's happening in your community today.</p>
+              <p className="text-slate-300 mt-1">Here&apos;s what&apos;s happening in your community today.</p>
             </div>
           </div>
           

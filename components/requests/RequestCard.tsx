@@ -5,7 +5,19 @@ import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 import { Clock, Tag, User } from "lucide-react";
 
-export function RequestCard({ request }: { request: any }) {
+interface RequestCardData {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  tags: string[];
+  urgency: string;
+  aiSummary?: string | null;
+  user?: { name?: string | null } | null;
+  createdAt: Date | string;
+}
+
+export function RequestCard({ request }: { request: RequestCardData }) {
   return (
     <Card className="flex flex-col h-full hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">
