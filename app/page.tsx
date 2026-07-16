@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useUser, UserButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
@@ -127,6 +128,7 @@ const CreateRequestFeature = ({ icon: Icon, title, description, color }: Feature
 );
 
 export default function LandingPage() {
+  const { isSignedIn, isLoaded: authLoaded } = useUser();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -181,16 +183,28 @@ export default function LandingPage() {
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              <Link href="/sign-in">
-                <Button variant="ghost" size="sm" className="font-semibold">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/sign-up">
-                <Button size="sm" className="bg-gradient-to-r from-primary to-purple-600 text-white shadow-md hover:shadow-lg transition-all">
-                  Get Started
-                </Button>
-              </Link>
+              {isSignedIn ? (
+                <UserButton
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md",
+                    },
+                  }}
+                />
+              ) : (
+                <>
+                  <Link href="/sign-in">
+                    <Button variant="ghost" size="sm" className="font-semibold">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/sign-up">
+                    <Button size="sm" className="bg-gradient-to-r from-primary to-purple-600 text-white shadow-md hover:shadow-lg transition-all">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -224,12 +238,26 @@ export default function LandingPage() {
                   </Link>
                 ))}
                 <div className="flex gap-3 pt-2">
-                  <Link href="/sign-in" className="flex-1">
-                    <Button variant="outline" className="w-full">Sign In</Button>
-                  </Link>
-                  <Link href="/sign-up" className="flex-1">
-                    <Button className="w-full bg-gradient-to-r from-primary to-purple-600">Get Started</Button>
-                  </Link>
+                  {isSignedIn ? (
+                    <div className="flex items-center justify-center w-full py-2">
+                      <UserButton
+                        appearance={{
+                          elements: {
+                            avatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md",
+                          },
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <Link href="/sign-in" className="flex-1">
+                        <Button variant="outline" className="w-full">Sign In</Button>
+                      </Link>
+                      <Link href="/sign-up" className="flex-1">
+                        <Button className="w-full bg-gradient-to-r from-primary to-purple-600">Get Started</Button>
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

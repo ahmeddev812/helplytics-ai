@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api/auth";
 import { success, noContent, error } from "@/lib/api/response";
-import { NotFoundError, ForbiddenError } from "@/lib/api/errors";
+import { NotFoundError } from "@/lib/api/errors";
+import { MOCK_REQUESTS } from "@/lib/mock-data";
 import { z } from "zod";
 
 const UpdateRequestSchema = z.object({
@@ -20,20 +20,7 @@ export async function GET(_req: Request, ctx: RouteContext<"/api/requests/[id]">
     await requireAuth();
     const { id } = await ctx.params;
 
-    const request = await prisma.request.findUnique({
-      where: { id },
-      include: {
-        user: { select: { id: true, name: true, avatarUrl: true, trustScore: true, badges: true } },
-        helpOffers: {
-          include: {
-            user: { select: { id: true, name: true, avatarUrl: true, trustScore: true, badges: true } },
-          },
-          orderBy: { createdAt: "desc" },
-        },
-        _count: { select: { helpOffers: true } },
-      },
-    });
-
+    const request = MOCK_REQUESTS.find((r) => r.id === id);
     if (!request) throw new NotFoundError("Request not found");
     return success(request);
   } catch (err) {
@@ -46,28 +33,14 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/requests/[id]"
     const user = await requireAuth();
     const { id } = await ctx.params;
 
-    const existing = await prisma.request.findUnique({ where: { id } });
+    const existing = MOCK_REQUESTS.find((r) => r.id === id);
     if (!existing) throw new NotFoundError("Request not found");
-    if (existing.userId !== user.id) throw new ForbiddenError();
 
     const body = await req.json();
     const parsed = UpdateRequestSchema.safeParse(body);
     if (!parsed.success) return error(parsed.error);
 
-    const data: Record<string, unknown> = { ...parsed.data };
-    if (data.status === "RESOLVED" && existing.status !== "RESOLVED") {
-      data.solvedAt = new Date();
-    }
-
-    const updated = await prisma.request.update({
-      where: { id },
-      data,
-      include: {
-        user: { select: { id: true, name: true, avatarUrl: true, trustScore: true } },
-      },
-    });
-
-    return success(updated);
+    return success({ ...existing, ...parsed.data, userId: user.id });
   } catch (err) {
     return error(err);
   }
@@ -75,14 +48,11 @@ export async function PATCH(req: Request, ctx: RouteContext<"/api/requests/[id]"
 
 export async function DELETE(_req: Request, ctx: RouteContext<"/api/requests/[id]">) {
   try {
-    const user = await requireAuth();
+    await requireAuth();
     const { id } = await ctx.params;
 
-    const existing = await prisma.request.findUnique({ where: { id } });
+    const existing = MOCK_REQUESTS.find((r) => r.id === id);
     if (!existing) throw new NotFoundError("Request not found");
-    if (existing.userId !== user.id) throw new ForbiddenError();
-
-    await prisma.request.delete({ where: { id } });
     return noContent();
   } catch (err) {
     return error(err);

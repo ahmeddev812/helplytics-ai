@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { MOCK_USERS } from "@/lib/mock-data";
 
 interface LeaderboardEntry {
   id: string;
@@ -14,29 +14,8 @@ interface LeaderboardEntry {
 }
 
 async function getLeaderboard(limit = 20): Promise<LeaderboardEntry[]> {
-  try {
-    const users = await prisma.user.findMany({
-      orderBy: { trustScore: "desc" },
-      take: limit,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        avatarUrl: true,
-        trustScore: true,
-        badges: true,
-        role: true,
-        skills: true,
-        location: true,
-        createdAt: true,
-      },
-    });
-    return users as unknown as LeaderboardEntry[];
-  } catch {
-    const { MOCK_USERS } = await import("@/lib/mock-data");
-    return MOCK_USERS.sort((a, b) => b.trustScore - a.trustScore)
-      .slice(0, limit) as unknown as LeaderboardEntry[];
-  }
+  return MOCK_USERS.sort((a, b) => b.trustScore - a.trustScore)
+    .slice(0, limit) as unknown as LeaderboardEntry[];
 }
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

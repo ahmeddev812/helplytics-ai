@@ -1,7 +1,6 @@
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { randomUUID } from "crypto";
-import { prisma } from "@/lib/prisma";
 import { ValidationError } from "./errors";
 
 const UPLOAD_DIR = join(process.cwd(), "public", "uploads");
@@ -76,42 +75,23 @@ export async function uploadFile(options: UploadOptions): Promise<UploadResult> 
 
   const url = `/uploads/${category}/${uniqueName}`;
 
-  const upload = await prisma.upload.create({
-    data: {
-      userId,
-      filename: uniqueName,
-      originalName: file.name,
-      mimeType: file.type,
-      size: file.size,
-      url,
-      category,
-    },
-  });
-
   return {
-    id: upload.id,
-    url: upload.url,
-    filename: upload.filename,
-    originalName: upload.originalName,
-    mimeType: upload.mimeType,
-    size: upload.size,
-    category: upload.category,
+    id: randomUUID(),
+    url,
+    filename: uniqueName,
+    originalName: file.name,
+    mimeType: file.type,
+    size: file.size,
+    category,
   };
 }
 
-export async function deleteUpload(uploadId: string, userId: string): Promise<void> {
-  const upload = await prisma.upload.findFirst({
-    where: { id: uploadId, userId },
-  });
-  if (!upload) throw new ValidationError("Upload not found");
-  await prisma.upload.delete({ where: { id: uploadId } });
+export async function deleteUpload(_uploadId: string, _userId: string): Promise<void> {
+  return;
 }
 
-export async function getUploadsByUser(userId: string, category?: string) {
-  return prisma.upload.findMany({
-    where: { userId, ...(category ? { category } : {}) },
-    orderBy: { createdAt: "desc" },
-  });
+export async function getUploadsByUser(_userId: string, _category?: string) {
+  return [];
 }
 
 export function generateSignedUrl(filename: string, category: string): string {

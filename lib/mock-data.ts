@@ -13,8 +13,8 @@ export const MOCK_USERS: User[] = [
     bio: "Passionate developer looking to help and learn.",
     trustScore: 850,
     badges: [Badge.HELPER, Badge.TRUSTED],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date("2026-07-01"),
+    updatedAt: new Date("2026-07-01"),
   },
   {
     id: "user2",
@@ -28,8 +28,8 @@ export const MOCK_USERS: User[] = [
     bio: "Data enthusiast with a love for teaching.",
     trustScore: 920,
     badges: [Badge.TOP_CONTRIBUTOR, Badge.COMMUNITY_LEADER],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date("2026-07-10"),
+    updatedAt: new Date("2026-07-10"),
   },
 ];
 
@@ -46,8 +46,8 @@ export const MOCK_REQUESTS: Request[] = [
     userId: "user1",
     user: MOCK_USERS[0],
     helpOffers: [],
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date("2026-07-14"),
+    updatedAt: new Date("2026-07-14"),
   },
   {
     id: "req2",
@@ -62,7 +62,7 @@ export const MOCK_REQUESTS: Request[] = [
     user: MOCK_USERS[1],
     helpOffers: [],
     helperId: "user1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date("2026-07-15"),
+    updatedAt: new Date("2026-07-15"),
   },
 ];

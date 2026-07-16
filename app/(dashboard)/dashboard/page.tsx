@@ -10,14 +10,13 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { RecentConversations } from "@/components/dashboard/RecentConversations";
 import { ContinueWorking } from "@/components/dashboard/ContinueWorking";
-import { MOCK_USERS, MOCK_REQUESTS } from "@/lib/mock-data";
+import { MOCK_REQUESTS } from "@/lib/mock-data";
 import { Sparkles, TrendingUp, Award, Users, Clock, Star } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const mounted = useMounted();
 
-  const mockUser = MOCK_USERS[0];
   const recentRequests = MOCK_REQUESTS;
 
   if (!mounted || !isLoaded) {
@@ -54,7 +53,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                Welcome back, {user?.fullName || mockUser.name}
+                Welcome back, {user?.fullName || "there"}
               </h1>
               <p className="text-slate-300 mt-1">Here&apos;s what&apos;s happening in your community today.</p>
             </div>
@@ -92,14 +91,14 @@ export default function DashboardPage() {
         />
         <StatsCard 
           title="Trust Score" 
-          value={<AnimatedCounter target={mockUser.trustScore} />}
+          value={<AnimatedCounter target={0} />}
           description="Community reputation" 
           icon="shield-check"
           trend="+5%"
         />
         <StatsCard 
           title="Badges" 
-          value={<AnimatedCounter target={mockUser.badges.length} />}
+          value={<AnimatedCounter target={0} />}
           description="Earned achievements" 
           icon="award"
         />

@@ -1,54 +1,52 @@
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
 import { UnauthorizedError, ForbiddenError } from "./errors";
 
-export async function getAuthUser() {
+export interface AuthUser {
+  id: string;
+  clerkId: string;
+  email: string;
+  name: string | null;
+  role: string;
+  trustScore: number;
+  badges: string[];
+  avatarUrl: string | null;
+}
+
+export async function getAuthUser(): Promise<AuthUser> {
   const session = await auth();
   const userId = session.userId;
   if (!userId) throw new UnauthorizedError();
 
-  const user = await prisma.user.findUnique({
-    where: { clerkId: userId },
-    select: {
-      id: true,
-      clerkId: true,
-      email: true,
-      name: true,
-      role: true,
-      trustScore: true,
-      badges: true,
-      avatarUrl: true,
-    },
-  });
-
-  if (!user) throw new UnauthorizedError("User not found in database");
-  return user;
+  return {
+    id: userId,
+    clerkId: userId,
+    email: session.sessionClaims?.email as string || "",
+    name: (session.sessionClaims?.name as string) || null,
+    role: "BOTH",
+    trustScore: 0,
+    badges: [],
+    avatarUrl: null,
+  };
 }
 
-export async function requireAuth() {
+export async function requireAuth(): Promise<AuthUser> {
   const session = await auth();
   const clerkId = session.userId;
   if (!clerkId) throw new UnauthorizedError();
 
-  const user = await prisma.user.findUnique({
-    where: { clerkId },
-    select: {
-      id: true,
-      clerkId: true,
-      email: true,
-      name: true,
-      role: true,
-      trustScore: true,
-      badges: true,
-      avatarUrl: true,
-    },
-  });
-
-  if (!user) throw new UnauthorizedError("User not found");
-  return user;
+  return {
+    id: clerkId,
+    clerkId,
+    email: session.sessionClaims?.email as string || "",
+    name: (session.sessionClaims?.name as string) || null,
+    role: "BOTH",
+    trustScore: 0,
+    badges: [],
+    avatarUrl: null,
+  };
 }
 
-export async function requireAdmin() {
+export async function requireAdmin(): Promise<AuthUser> {
   const user = await requireAuth();
   if (user.role !== "CAN_HELP" && user.role !== "BOTH") {
     throw new ForbiddenError("Admin access required");
@@ -56,7 +54,7 @@ export async function requireAdmin() {
   return user;
 }
 
-export async function getAuthUserOrNull() {
+export async function getAuthUserOrNull(): Promise<AuthUser | null> {
   try {
     return await getAuthUser();
   } catch {

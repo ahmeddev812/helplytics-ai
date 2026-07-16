@@ -3,13 +3,10 @@ import { success, error } from "@/lib/api/response";
 import { uploadFile, getUploadsByUser } from "@/lib/api/upload";
 import { checkRateLimit, getRateLimitKey } from "@/lib/api/rate-limit";
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const user = await requireAuth();
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category") || undefined;
-
-    const uploads = await getUploadsByUser(user.id, category);
+    const uploads = await getUploadsByUser(user.id);
     return success(uploads);
   } catch (err) {
     return error(err);

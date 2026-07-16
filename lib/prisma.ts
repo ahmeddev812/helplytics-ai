@@ -1,25 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-function createPrismaClient() {
-  const url = process.env.DATABASE_URL;
-  if (!url) {
-    throw new Error("DATABASE_URL environment variable is required");
-  }
-
-  const adapter = new PrismaPg({ connectionString: url });
-
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
-}
-
-export const prisma =
-  globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// Prisma removed. This file exists only to prevent import errors.
+// No database is used - all data comes from mock data or localStorage.
+export const prisma = null as unknown as Record<string, Record<string, unknown>>;

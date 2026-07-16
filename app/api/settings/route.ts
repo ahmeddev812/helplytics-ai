@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api/auth";
 import { success, error } from "@/lib/api/response";
 import { z } from "zod";
@@ -21,19 +20,21 @@ const SettingsSchema = z.object({
 
 export async function GET() {
   try {
-    const user = await requireAuth();
-
-    let settings = await prisma.userSettings.findUnique({
-      where: { userId: user.id },
+    await requireAuth();
+    return success({
+      theme: "system",
+      language: "en",
+      emailNotifications: true,
+      pushNotifications: true,
+      desktopNotifications: false,
+      soundEnabled: true,
+      showOnlineStatus: true,
+      showTrustScore: true,
+      autoSuggestions: true,
+      aiInsights: true,
+      defaultUrgency: "MEDIUM",
+      itemsPerPage: 10,
     });
-
-    if (!settings) {
-      settings = await prisma.userSettings.create({
-        data: { userId: user.id },
-      });
-    }
-
-    return success(settings);
   } catch (err) {
     return error(err);
   }
@@ -41,26 +42,12 @@ export async function GET() {
 
 export async function PATCH(req: Request) {
   try {
-    const user = await requireAuth();
+    await requireAuth();
     const body = await req.json();
     const parsed = SettingsSchema.safeParse(body);
-
     if (!parsed.success) return error(parsed.error);
 
-    const settings = await prisma.userSettings.upsert({
-      where: { userId: user.id },
-      update: parsed.data,
-      create: { userId: user.id, ...parsed.data },
-    });
-
-    if (parsed.data.theme) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { theme: parsed.data.theme },
-      });
-    }
-
-    return success(settings);
+    return success(parsed.data);
   } catch (err) {
     return error(err);
   }

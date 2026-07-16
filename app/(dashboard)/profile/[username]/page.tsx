@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequestCard } from "@/components/requests/RequestCard";
-import { MOCK_USERS, MOCK_REQUESTS } from "@/lib/mock-data";
+import { MOCK_REQUESTS } from "@/lib/mock-data";
 import { useMounted, useLocalStorage } from "@/lib/hooks";
 import { TRUST_SCORE } from "@/lib/constants";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ import {
   Mail, Edit, Sparkles, Star, TrendingUp, Heart, Globe,
   CheckCircle, Clock, Users, Zap, Save, X, Camera,
   Code, MessageSquare, Share2, Link2, Palette, Languages,
-  Moon, Sun, Monitor
+  Moon, Sun, Monitor, LogOut
 } from "lucide-react";
 
 interface UserProfile {
@@ -70,7 +70,6 @@ export default function ProfilePage() {
     }
   }, [mounted, clerkUser]);
 
-  const mockUser = MOCK_USERS[0];
   const userRequests = MOCK_REQUESTS;
 
   const startEditing = () => {
@@ -108,13 +107,13 @@ export default function ProfilePage() {
     }));
   };
 
-  const displayName = profile.name || mockUser.name;
-  const displayRole = profile.role || mockUser.role;
-  const displayBio = profile.bio || mockUser.bio || "No bio provided yet. Tell the community about yourself!";
-  const displayLocation = profile.location || mockUser.location;
-  const displaySkills = profile.skills.length > 0 ? profile.skills : mockUser.skills;
-  const displayInterests = profile.interests.length > 0 ? profile.interests : mockUser.interests;
-  const trustScore = mockUser.trustScore;
+  const displayName = profile.name || clerkUser?.fullName || "User";
+  const displayRole = profile.role || "Member";
+  const displayBio = profile.bio || "No bio provided yet. Tell the community about yourself!";
+  const displayLocation = profile.location || "";
+  const displaySkills = profile.skills.length > 0 ? profile.skills : [];
+  const displayInterests = profile.interests.length > 0 ? profile.interests : [];
+  const trustScore = 0;
 
   if (!mounted || !isLoaded) {
     return (
@@ -183,9 +182,16 @@ export default function ProfilePage() {
                 </div>
               </div>
               {!editing ? (
-                <Button size="sm" className="gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all" onClick={startEditing}>
-                  <Edit className="h-4 w-4" /> Edit Profile
-                </Button>
+                <div className="flex gap-2">
+                  <Button size="sm" className="gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 transition-all" onClick={startEditing}>
+                    <Edit className="h-4 w-4" /> Edit Profile
+                  </Button>
+                  <SignOutButton>
+                    <Button size="sm" variant="outline" className="gap-2 bg-white/5 border-red-400/30 text-red-300 hover:bg-red-500/20 hover:text-red-200">
+                      <LogOut className="h-4 w-4" /> Sign Out
+                    </Button>
+                  </SignOutButton>
+                </div>
               ) : (
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={cancelEditing}>
@@ -301,16 +307,7 @@ export default function ProfilePage() {
                   <Award className="h-3.5 w-3.5" /> Badges Earned
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {mockUser.badges.length === 0 ? (
-                    <p className="text-xs text-slate-400 italic">No badges earned yet.</p>
-                  ) : (
-                    mockUser.badges.map((badge: string) => (
-                      <Badge key={badge} className="bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-0 px-3 py-1">
-                        <Star className="h-2.5 w-2.5 mr-1" />
-                        {badge}
-                      </Badge>
-                    ))
-                  )}
+                  <p className="text-xs text-slate-400 italic">No badges earned yet.</p>
                 </div>
               </div>
             </CardContent>
@@ -491,7 +488,7 @@ export default function ProfilePage() {
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 text-center">
               <Star className="h-5 w-5 text-amber-500 mx-auto mb-1" />
-              <div className="text-xl font-bold text-slate-900">{mockUser.badges.length}</div>
+              <div className="text-xl font-bold text-slate-900">0</div>
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Badges</div>
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 text-center">

@@ -34,6 +34,7 @@ export interface User {
   role: UserRole;
   skills: string[];
   interests: string[];
+  avatarUrl?: string | null;
   location?: string | null;
   bio?: string | null;
   trustScore: number;

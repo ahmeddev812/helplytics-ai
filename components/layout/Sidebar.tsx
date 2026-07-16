@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUser, UserButton } from "@clerk/nextjs";
+import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
@@ -16,6 +16,7 @@ import {
   Settings,
   HelpCircle,
   ChevronRight,
+  LogOut,
   X
 } from "lucide-react";
 
@@ -37,6 +38,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   const secondaryRoutes = [
     { label: "Settings", icon: Settings, href: "/settings" },
     { label: "Help Support", icon: HelpCircle, href: "/support" },
+    { label: "Sign Out", icon: LogOut, href: "#", signOut: true },
   ];
 
   return (
@@ -105,19 +107,33 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
         {/* Secondary Navigation */}
         <div className="mt-auto space-y-2">
           <p className="px-3 pb-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400/80">Settings</p>
-          {secondaryRoutes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              onClick={onClose}
-              className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50/80 hover:text-slate-900 transition-all duration-200 hover:shadow-sm"
-            >
-              <route.icon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 transition-all duration-200" />
-              <span className="text-sm font-semibold tracking-tight text-slate-600 group-hover:text-slate-900 transition-colors">
-                {route.label}
-              </span>
-            </Link>
-          ))}
+          {secondaryRoutes.map((route) =>
+            route.signOut ? (
+              <SignOutButton key="sign-out">
+                <button
+                  onClick={onClose}
+                  className="group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50/80 hover:text-red-600 transition-all duration-200 hover:shadow-sm"
+                >
+                  <route.icon className="h-5 w-5 text-slate-400 group-hover:text-red-500 group-hover:scale-105 transition-all duration-200" />
+                  <span className="text-sm font-semibold tracking-tight text-slate-600 group-hover:text-red-600 transition-colors">
+                    {route.label}
+                  </span>
+                </button>
+              </SignOutButton>
+            ) : (
+              <Link
+                key={route.href}
+                href={route.href}
+                onClick={onClose}
+                className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50/80 hover:text-slate-900 transition-all duration-200 hover:shadow-sm"
+              >
+                <route.icon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 transition-all duration-200" />
+                <span className="text-sm font-semibold tracking-tight text-slate-600 group-hover:text-slate-900 transition-colors">
+                  {route.label}
+                </span>
+              </Link>
+            )
+          )}
           
           {/* Pro Badge/CTA */}
           <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300">

@@ -1,52 +1,27 @@
-import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api/auth";
 import { success, error } from "@/lib/api/response";
-import { getUsageStats } from "@/lib/api/analytics";
+import { MOCK_REQUESTS } from "@/lib/mock-data";
 
 export async function GET() {
   try {
     const authUser = await requireAuth();
 
-    const [user, ...results] = await Promise.all([
-      prisma.user.findUnique({
-        where: { id: authUser.id },
-        select: { trustScore: true },
-      }),
-      prisma.request.count({ where: { userId: authUser.id } }),
-      prisma.request.count({ where: { userId: authUser.id, status: "RESOLVED" } }),
-      prisma.request.count({ where: { userId: authUser.id, status: "IN_PROGRESS" } }),
-      prisma.notification.count({ where: { userId: authUser.id, read: false } }),
-      prisma.request.findMany({
-        where: { userId: authUser.id },
-        orderBy: { updatedAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          title: true,
-          status: true,
-          urgency: true,
-          createdAt: true,
-        },
-      }),
-      prisma.conversation.count({ where: { userId: authUser.id } }),
-      getUsageStats(authUser.id),
-      prisma.favorite.count({ where: { userId: authUser.id } }),
-    ]);
-
-    const [totalRequests, resolvedRequests, inProgressRequests, notifications, recentActivity, conversations, usage, favorites] = results;
-
     return success({
       stats: {
-        totalRequests,
-        resolvedRequests,
-        inProgressRequests,
-        conversations,
-        unreadNotifications: notifications,
-        favorites,
-        trustScore: user?.trustScore || 0,
+        totalRequests: 0,
+        resolvedRequests: 0,
+        inProgressRequests: 0,
+        conversations: 0,
+        unreadNotifications: 0,
+        favorites: 0,
+        trustScore: 0,
       },
-      recentActivity,
-      usage,
+      recentActivity: MOCK_REQUESTS.slice(0, 5),
+      usage: {
+        daily: { aiRequests: 0, promptsUsed: 0, exports: 0 },
+        monthly: { aiRequests: 0, promptsUsed: 0, exports: 0 },
+        total: { aiRequests: 0, promptsUsed: 0, exports: 0 },
+      },
     });
   } catch (err) {
     return error(err);

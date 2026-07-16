@@ -1,5 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
-
 const AI_TAGS_MAP: Record<string, string[]> = {
   development: ["React", "TypeScript", "Frontend", "Backend", "API", "Database"],
   design: ["UI", "UX", "Figma", "Design", "Wireframe", "Prototype"],
