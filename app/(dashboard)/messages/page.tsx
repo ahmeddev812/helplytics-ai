@@ -33,9 +33,16 @@ import { formatDistanceToNow } from "date-fns";
 export default function MessagesPage() {
   const { user } = useUser();
   const mounted = useMounted();
-  const [selectedChat, setSelectedChat] = useState<any>(null);
+  const [selectedChat, setSelectedChat] = useState<{
+    user: { name: string; status: string; trustScore: number; role: string };
+  } | null>(null);
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<{
+    id: string;
+    senderId: string;
+    content: string;
+    timestamp: Date;
+  }[]>([]);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 

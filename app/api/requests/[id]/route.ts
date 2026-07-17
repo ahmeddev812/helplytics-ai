@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/api/auth";
-import { success, noContent, error } from "@/lib/api/response";
+import { success, error } from "@/lib/api/response";
 import { NotFoundError } from "@/lib/api/errors";
 import { z } from "zod";
 
@@ -39,7 +39,6 @@ export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string 
     await requireAuth();
     const { id } = await ctx.params;
     throw new NotFoundError("Request not found");
-    return noContent();
   } catch (err) {
     return error(err);
   }

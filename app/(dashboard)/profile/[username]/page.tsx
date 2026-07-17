@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RequestCard } from "@/components/requests/RequestCard";
 import { useMounted, useLocalStorage } from "@/lib/hooks";
 import { useTheme } from "@/components/theme";
 import { TRUST_SCORE } from "@/lib/constants";
@@ -76,8 +75,6 @@ export default function ProfilePage() {
       setTheme(profile.theme);
     }
   }, [mounted]);
-
-  const userRequests: any[] = [];
 
   const startEditing = () => {
     setEditForm(profile);
@@ -485,7 +482,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 text-center">
               <Users className="h-5 w-5 text-blue-500 mx-auto mb-1" />
-              <div className="text-xl font-bold text-slate-900">{userRequests.length}</div>
+              <div className="text-xl font-bold text-slate-900">0</div>
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Requests</div>
             </div>
             <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 text-center">
@@ -519,19 +516,13 @@ export default function ProfilePage() {
           </div>
           
           <div className="grid gap-4">
-            {userRequests.length === 0 ? (
-              <div className="text-center py-16 bg-gradient-to-br from-muted to-background rounded-2xl border border-slate-200">
-                <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                  <Clock className="h-8 w-8 text-slate-400" />
-                </div>
-                <p className="text-slate-500 font-medium">No contribution history yet.</p>
-                <p className="text-sm text-slate-400 mt-1">Start helping others to build your reputation!</p>
+            <div className="text-center py-16 bg-gradient-to-br from-muted to-background rounded-2xl border border-slate-200">
+              <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                <Clock className="h-8 w-8 text-slate-400" />
               </div>
-            ) : (
-              userRequests.map((request) => (
-                <RequestCard key={request.id} request={request} />
-              ))
-            )}
+              <p className="text-slate-500 font-medium">No contribution history yet.</p>
+              <p className="text-sm text-slate-400 mt-1">Start helping others to build your reputation!</p>
+            </div>
           </div>
         </div>
       </div>

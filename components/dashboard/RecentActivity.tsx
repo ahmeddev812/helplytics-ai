@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function RecentActivity({ requests, className }: { requests: any[], className?: string }) {
+export function RecentActivity({ requests, className }: { requests: Array<{ id: string; title: string; status: string; createdAt: string; category: string }>, className?: string }) {
   return (
     <Card className={cn("border-slate-100 shadow-sm overflow-hidden", className)}>
       <CardHeader className="border-b bg-slate-50/30 pb-4">

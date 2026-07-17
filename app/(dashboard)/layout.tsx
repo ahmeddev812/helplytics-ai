@@ -14,7 +14,7 @@ export default function DashboardLayout({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [currentTime, setCurrentTime] = useState("");
+  const [currentTime, setCurrentTime] = useState(() => new Date().toLocaleTimeString());
 
   useEffect(() => {
     const checkMobile = () => {
@@ -22,10 +22,16 @@ export default function DashboardLayout({
     };
     
     checkMobile();
-    setCurrentTime(new Date().toLocaleTimeString());
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   // Close sidebar when clicking escape key
