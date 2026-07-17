@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useUser, UserButton, SignInButton } from "@clerk/nextjs";
+
+import { LandingNavbar } from "@/components/layout/LandingNavbar";
+import { FloatingChatbot } from "@/components/layout/FloatingChatbot";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { 
   Bot, 
   Users, 
@@ -19,8 +21,6 @@ import {
   Trophy,
   BrainCircuit,
   Star,
-  Menu,
-  X,
   Rocket,
   Heart,
   Quote,
@@ -128,9 +128,7 @@ const CreateRequestFeature = ({ icon: Icon, title, description, color }: Feature
 );
 
 export default function LandingPage() {
-  const { isSignedIn, isLoaded: authLoaded } = useUser();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.8]);
 
@@ -140,11 +138,8 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { label: "Explore", href: "/explore" },
-    { label: "AI Center", href: "/ai-center" },
-    { label: "Create Request", href: "/request/create" },
-  ];
+  
+
 
   return (
     <div className="flex flex-col min-h-screen bg-white selection:bg-primary/10 overflow-x-hidden">
@@ -153,117 +148,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
-      {/* Navbar */}
-      <nav className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300",
-        isScrolled ? "bg-white/95 backdrop-blur-xl border-b border-slate-200/50 shadow-sm" : "bg-transparent"
-      )}>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-purple-600 shadow-lg shadow-primary/25 transition-transform group-hover:scale-110">
-                <Sparkles className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-xl font-black tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                Helplytics AI
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm font-medium text-slate-600 hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            <div className="hidden md:flex items-center gap-3">
-              {isSignedIn ? (
-                <UserButton
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md",
-                    },
-                  }}
-                />
-              ) : (
-                <>
-                  <Link href="/sign-in">
-                    <Button variant="ghost" size="sm" className="font-semibold">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/sign-up">
-                    <Button size="sm" className="bg-gradient-to-r from-primary to-purple-600 text-white shadow-md hover:shadow-lg transition-all">
-                      Get Started
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-b border-slate-200"
-            >
-              <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-sm font-medium text-slate-600 hover:text-primary transition-colors py-2"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="flex gap-3 pt-2">
-                  {isSignedIn ? (
-                    <div className="flex items-center justify-center w-full py-2">
-                      <UserButton
-                        appearance={{
-                          elements: {
-                            avatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md",
-                          },
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      <Link href="/sign-in" className="flex-1">
-                        <Button variant="outline" className="w-full">Sign In</Button>
-                      </Link>
-                      <Link href="/sign-up" className="flex-1">
-                        <Button className="w-full bg-gradient-to-r from-primary to-purple-600">Get Started</Button>
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      <LandingNavbar />
 
       {/* Hero Section */}
       <section className="relative pt-28 xs:pt-32 pb-16 xs:pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
@@ -400,7 +285,7 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof / Stats Bar */}
-      <section className="py-16 border-y border-slate-100 bg-gradient-to-r from-slate-50/50 to-white/50">
+      <section className="py-16 border-y border-slate-100 bg-gradient-to-r from-muted/50 to-background/50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <motion.div
@@ -488,7 +373,7 @@ export default function LandingPage() {
       </section>
 
       {/* Create Request Feature Section - NEW (Replaced Pricing) */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-24 bg-gradient-to-b from-muted to-background">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.div
@@ -622,7 +507,7 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials / Wall of Love */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-24 bg-gradient-to-b from-muted to-background">
         <div className="container mx-auto px-4 overflow-hidden">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.div
@@ -724,18 +609,17 @@ export default function LandingPage() {
             <div>
               <h4 className="font-bold text-slate-900 mb-4 text-sm">Product</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><Link href="/explore" className="hover:text-primary transition-colors">Explore</Link></li>
-                <li><Link href="/ai-center" className="hover:text-primary transition-colors">AI Center</Link></li>
-                <li><Link href="/request/create" className="hover:text-primary transition-colors">Create Request</Link></li>
+                <li><Link href="/features" className="hover:text-primary transition-colors">Features</Link></li>
+                <li><Link href="/how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
+                <li><Link href="/about" className="hover:text-primary transition-colors">About</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-bold text-slate-900 mb-4 text-sm">Community</h4>
               <ul className="space-y-2 text-sm text-slate-500">
-                <li><Link href="/leaderboard" className="hover:text-primary transition-colors">Leaderboard</Link></li>
-                <li><Link href="/guidelines" className="hover:text-primary transition-colors">Guidelines</Link></li>
-                <li><Link href="/support" className="hover:text-primary transition-colors">Support</Link></li>
+                <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               </ul>
             </div>
             
@@ -761,19 +645,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Floating AI Bot */}
-      <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 3, repeat: Infinity }}
-        className="fixed bottom-4 right-4 xs:bottom-6 xs:right-6 z-40"
-      >
-        <div className="relative group cursor-pointer">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-purple-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-          <div className="relative w-10 xs:w-12 h-10 xs:h-12 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-            <Bot className="h-5 xs:h-6 w-5 xs:w-6 text-white" />
-          </div>
-        </div>
-      </motion.div>
+      <FloatingChatbot />
     </div>
   );
 }

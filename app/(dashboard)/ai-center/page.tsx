@@ -334,7 +334,7 @@ export default function AICenterPage() {
 
   return (
     <div className="h-[calc(100vh-80px)] lg:h-[calc(100vh-100px)] overflow-hidden">
-      <div className="flex h-full bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
+      <div className="flex h-full bg-gradient-to-br from-muted to-background rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
         {/* Sidebar */}
         <div
           className={cn(

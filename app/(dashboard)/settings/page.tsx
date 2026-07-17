@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLocalStorage } from "@/lib/hooks";
+import { useTheme } from "@/components/theme";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -45,6 +46,7 @@ const DEFAULT_SETTINGS: AppSettings = {
 };
 
 export default function SettingsPage() {
+  const { setTheme } = useTheme();
   const [settings, setSettings] = useLocalStorage<AppSettings>("ha_user_settings", DEFAULT_SETTINGS);
   const [saving, setSaving] = useState(false);
 
@@ -84,7 +86,7 @@ export default function SettingsPage() {
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => updateSetting("theme", option.value)}
+                  onClick={() => { setTheme(option.value); updateSetting("theme", option.value); }}
                   className={cn(
                     "flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all flex-1",
                     settings.theme === option.value

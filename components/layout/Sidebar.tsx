@@ -42,7 +42,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   ];
 
   return (
-    <div className="flex flex-col h-full w-[280px] max-w-[85vw] bg-gradient-to-b from-white via-white to-slate-50/30 border-r border-slate-200/40 shadow-xl shadow-slate-200/20">
+    <div className="flex flex-col h-full w-[280px] max-w-[85vw] bg-gradient-to-b from-background via-background to-muted/30 border-r border-slate-200/40 shadow-xl shadow-slate-200/20">
       {/* Close button for mobile */}
       <div className="flex justify-end p-2 lg:hidden">
         <button
@@ -60,8 +60,8 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/25">
               <Bot className="h-4 w-4 text-white" />
             </div>
-            <span className="text-lg font-black tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-              Helplytics AI
+            <span className="text-lg font-black tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                Helplytics AI
             </span>
           </Link>
         </div>

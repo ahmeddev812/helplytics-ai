@@ -90,7 +90,7 @@ export default function OnboardingPage() {
   const interestSuggestions = ["AI", "Machine Learning", "Web3", "Blockchain", "Design", "Business", "Health", "Education"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100/50 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-muted via-background to-muted flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
       {/* Animated Background Decor */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-gradient-to-br from-primary/5 to-blue-500/5 rounded-full blur-[120px] animate-pulse" />

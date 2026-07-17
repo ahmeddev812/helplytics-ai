@@ -70,7 +70,7 @@ export default function MessagesPage() {
 
   return (
     <div className="h-[calc(100vh-80px)] lg:h-[calc(100vh-100px)] overflow-hidden">
-      <div className="flex h-full bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
+      <div className="flex h-full bg-gradient-to-br from-muted to-background rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden">
         
         {/* Sidebar: Chat List */}
         <div className={cn(
@@ -78,7 +78,7 @@ export default function MessagesPage() {
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           {/* Sidebar Header */}
-          <div className="p-5 border-b bg-gradient-to-r from-slate-50 to-white">
+          <div className="p-5 border-b bg-gradient-to-r from-muted to-background">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/25">

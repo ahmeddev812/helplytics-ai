@@ -307,7 +307,7 @@ export default function CreateRequestPage() {
 
             {/* Preview Section */}
             {watchedTitle && (
-              <div className="p-4 rounded-xl bg-gradient-to-r from-slate-50 to-white border border-slate-200">
+              <div className="p-4 rounded-xl bg-gradient-to-r from-muted to-background border border-slate-200">
                 <p className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-2">
                   <Sparkles className="h-3 w-3" />
                   Preview

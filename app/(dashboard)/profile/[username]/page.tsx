@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequestCard } from "@/components/requests/RequestCard";
 import { useMounted, useLocalStorage } from "@/lib/hooks";
+import { useTheme } from "@/components/theme";
 import { TRUST_SCORE } from "@/lib/constants";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -56,6 +57,7 @@ const INTEREST_SUGGESTIONS = ["AI", "Machine Learning", "Web3", "Design", "Busin
 
 export default function ProfilePage() {
   const { user: clerkUser, isLoaded } = useUser();
+  const { theme: currentTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -68,6 +70,12 @@ export default function ProfilePage() {
       setProfile(newProfile);
     }
   }, [mounted, clerkUser]);
+
+  useEffect(() => {
+    if (mounted && profile.theme) {
+      setTheme(profile.theme);
+    }
+  }, [mounted]);
 
   const userRequests: any[] = [];
 
@@ -82,6 +90,7 @@ export default function ProfilePage() {
 
   const saveProfile = () => {
     setSaving(true);
+    setTheme(editForm.theme);
     setProfile(editForm);
     setTimeout(() => {
       setSaving(false);
@@ -285,7 +294,7 @@ export default function ProfilePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="relative text-center p-5 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl overflow-hidden">
+              <div className="relative text-center p-5 bg-gradient-to-br from-muted to-muted/80 rounded-xl overflow-hidden">
                 <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full blur-xl" />
                 <div className="relative">
                   <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg mb-3">
@@ -435,11 +444,10 @@ export default function ProfilePage() {
                   ].map((option) => (
                     <button
                       key={option.value}
-                      onClick={() => editing && setEditForm((prev) => ({ ...prev, theme: option.value }))}
-                      disabled={!editing}
+                      onClick={() => { setTheme(option.value); if (editing) { setEditForm((prev) => ({ ...prev, theme: option.value })); } }}
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
-                        (editing ? editForm.theme : profile.theme) === option.value
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer",
+                        currentTheme === option.value
                           ? "bg-primary text-primary-foreground"
                           : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                       )}
@@ -512,7 +520,7 @@ export default function ProfilePage() {
           
           <div className="grid gap-4">
             {userRequests.length === 0 ? (
-              <div className="text-center py-16 bg-gradient-to-br from-slate-50 to-white rounded-2xl border border-slate-200">
+              <div className="text-center py-16 bg-gradient-to-br from-muted to-background rounded-2xl border border-slate-200">
                 <div className="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
                   <Clock className="h-8 w-8 text-slate-400" />
                 </div>

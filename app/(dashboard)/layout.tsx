@@ -14,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     const checkMobile = () => {
@@ -21,6 +22,7 @@ export default function DashboardLayout({
     };
     
     checkMobile();
+    setCurrentTime(new Date().toLocaleTimeString());
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
@@ -39,7 +41,7 @@ export default function DashboardLayout({
   }, [isSidebarOpen]);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100/50">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-muted via-background to-muted">
       {/* Mobile Sidebar Toggle Button */}
       <button
           onClick={() => setIsSidebarOpen(true)}
@@ -107,8 +109,8 @@ export default function DashboardLayout({
               <span>v2.0.0</span>
             </div>
             <div className="flex items-center gap-4">
-              <span>
-                ✨ {new Date().toLocaleTimeString()}</span>
+              <span suppressHydrationWarning>
+                ✨ {currentTime || "..."}</span>
             </div>
           </div>
         </footer>
